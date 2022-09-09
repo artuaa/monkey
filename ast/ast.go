@@ -2,7 +2,6 @@ package ast
 
 import "interpreter/token"
 
-
 type Node interface {
 	TokenLiteral() string
 }
@@ -10,7 +9,6 @@ type Node interface {
 type Statement interface {
 	Node
 	statementNode()
-
 }
 
 type Expression interface {
@@ -22,16 +20,16 @@ type Program struct {
 	Statements []Statement
 }
 
-func (p *Program) TokenLiteral() string{
+func (p *Program) TokenLiteral() string {
 	if len(p.Statements) > 0 {
 		return p.Statements[0].TokenLiteral()
 	}
 	return ""
 }
 
-type LetStatement struct{
+type LetStatement struct {
 	Token token.Token
-	Name *Identifier
+	Name  *Identifier
 	Value Expression
 }
 
@@ -50,4 +48,15 @@ func (i *Identifier) expressionNode() {}
 
 func (i *Identifier) TokenLiteral() string {
 	return i.Token.Literal
+}
+
+type ReturnStatement struct {
+	Token       token.Token
+	ReturnValue Expression
+}
+
+func (rs *ReturnStatement) statementNode() {}
+
+func (rs *ReturnStatement) TokenLiteral() string {
+	return rs.Token.Literal
 }
