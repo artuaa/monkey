@@ -7,6 +7,9 @@ import (
 	"interpreter/token"
 )
 
+type prefixParseFn func() ast.Expression
+type infixParseFn func(ast.Expression) ast.Expression
+
 type Parser struct {
 	l *lexer.Lexer
 
@@ -14,8 +17,8 @@ type Parser struct {
 	peekToken token.Token
 
 	errors []string
-
 }
+
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{l: l, errors: []string{}}
 	p.nextToken()
