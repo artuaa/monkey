@@ -7,6 +7,17 @@ import (
 	"interpreter/token"
 )
 
+const (
+	_ int = iota
+	LOWEST
+	EQUALS      // ==
+	LESSGREATER // > or <
+	SUM         // +
+	PRODUCT     // *
+	PREFIX      // -X or !X
+	CALL        // myFunction(X)
+)
+
 type prefixParseFn func() ast.Expression
 type infixParseFn func(ast.Expression) ast.Expression
 
@@ -16,21 +27,38 @@ type Parser struct {
 	curToken  token.Token
 	peekToken token.Token
 
+	prefixParseFns map[token.TokenType]prefixParseFn
+	infixParseFns  map[token.TokenType]infixParseFn
+
 	errors []string
 }
 
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{l: l, errors: []string{}}
+	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
+	p.registerPrefix(token.IDENT, p.parseIdentifier)
 	p.nextToken()
 	p.nextToken()
 	return p
+}
+
+func (p *Parser) registerPrefix(tt token.TokenType, f prefixParseFn) {
+	p.prefixParseFns[tt] = f
+}
+
+func (p *Parser) registerInfix(tt token.TokenType, f infixParseFn) {
+	p.infixParseFns[tt] = f
+}
+
+func (p *Parser) parseIdentifier() ast.Expression {
+	return &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 }
 
 func (p *Parser) Errors() []string {
 	return p.errors
 }
 
-func (p *Parser) peekError(tp token.TokenType)  {
+func (p *Parser) peekError(tp token.TokenType) {
 	msg := fmt.Sprintf("expected next token to be %s but got %s", tp, p.peekToken.Type)
 	p.errors = append(p.errors, msg)
 }
@@ -42,10 +70,30 @@ func (p *Parser) parseStatement() ast.Statement {
 	case token.RETURN:
 		return p.parseReturnStatement()
 	default:
-		return nil
+		return p.parseExpressionStatement()
 	}
 }
 
+func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
+	stmt := &ast.ExpressionStatement{Token: p.curToken}
+	stmt.Expression = p.parseExpression(LOWEST)
+
+	if p.peekTokenIs(token.SEMICOLON) {
+		p.nextToken()
+	}
+	return stmt
+}
+
+func (p *Parser) parseExpression(t int) ast.Expression {
+	prefix := p.prefixParseFns[p.curToken.Type]
+
+	if prefix == nil {
+		return nil
+	}
+
+	leftExp := prefix()
+	return leftExp
+}
 
 func (p *Parser) parseLetStatement() ast.Statement {
 	stmt := &ast.LetStatement{Token: p.curToken}
@@ -72,11 +120,11 @@ func (p *Parser) peekTokenIs(tp token.TokenType) bool {
 }
 
 func (p *Parser) curTokenIs(tp token.TokenType) bool {
-	return p.curToken.Type == tp;
+	return p.curToken.Type == tp
 }
 
 func (p *Parser) expectedPeek(tp token.TokenType) bool {
-	if p.peekTokenIs(tp){
+	if p.peekTokenIs(tp) {
 		p.nextToken()
 		return true
 	}
@@ -111,7 +159,7 @@ func (p *Parser) parseReturnStatement() ast.Statement {
 	stmt := &ast.ReturnStatement{Token: p.curToken}
 	// TODO: parse expression
 
-	for !p.curTokenIs(token.SEMICOLON){
+	for !p.curTokenIs(token.SEMICOLON) {
 		p.nextToken()
 	}
 	return stmt

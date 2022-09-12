@@ -8,7 +8,7 @@
 - [X] 1.5 - Start of a REPL
 ** 2 Parsing [10/24]
 :LOGBOOK:
-CLOCK: [2022-09-09 Fri 12:14]
+CLOCK: [2022-09-12 Mon 08:59]--[2022-09-12 Mon 09:24] =>  0:25
 :END:
 - [X] 2.1 - Parsers
 - [X] 2.2 - Why not a parser generator?
@@ -20,7 +20,7 @@ CLOCK: [2022-09-09 Fri 12:14]
 - [X] Top Down Operator Precedence (or: Pratt Parsing)
 - [X] Terminology
 - [X] Preparing the AST
-- [ ] Implementing the Pratt Parser
+- [X] Implementing the Pratt Parser
 - [ ] Identifiers
 - [ ] Integer Literals
 - [ ] Prefix Operators

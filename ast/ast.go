@@ -26,7 +26,7 @@ type Program struct {
 
 func (p *Program) String() string {
 	var out bytes.Buffer
-	for _, s := range p.Statements{
+	for _, s := range p.Statements {
 		out.WriteString(s.String())
 	}
 	return out.String()
@@ -51,7 +51,7 @@ func (ls *LetStatement) String() string {
 	out.WriteString(ls.Name.String())
 	out.WriteString(" = ")
 
-	if ls.Value != nil{
+	if ls.Value != nil {
 		out.WriteString(ls.Value.String())
 	}
 	out.WriteString(";")
@@ -87,13 +87,12 @@ type ReturnStatement struct {
 func (rs *ReturnStatement) String() string {
 	var out bytes.Buffer
 	out.WriteString(rs.TokenLiteral() + " ")
-	if rs.ReturnValue != nil{
+	if rs.ReturnValue != nil {
 		out.WriteString(rs.ReturnValue.String())
 	}
 	out.WriteString(";")
 	return out.String()
 }
-
 
 func (rs *ReturnStatement) statementNode() {}
 
@@ -102,10 +101,12 @@ func (rs *ReturnStatement) TokenLiteral() string {
 }
 
 type ExpressionStatement struct {
-	Token token.Token
+	Token      token.Token
 	Expression Expression
 }
 
 func (es *ExpressionStatement) statementNode() {}
 
 func (es *ExpressionStatement) TokenLiteral() string { return es.Token.Literal }
+
+func (es *ExpressionStatement) String() string { return es.Token.Literal }
