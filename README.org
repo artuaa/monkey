@@ -6,8 +6,10 @@
 - [X] 1.3 - The Lexer
 - [X] 1.4 - Extending our Token Set and Lexer
 - [X] 1.5 - Start of a REPL
-** 2 Parsing [17/23]
+** 2 Parsing [18/23]
 :LOGBOOK:
+CLOCK: [2022-09-13 Tue 12:04]
+CLOCK: [2022-09-13 Tue 11:30]--[2022-09-13 Tue 11:55] =>  0:25
 CLOCK: [2022-09-13 Tue 10:53]--[2022-09-13 Tue 11:18] =>  0:25
 CLOCK: [2022-09-13 Tue 10:11]--[2022-09-13 Tue 10:36] =>  0:25
 CLOCK: [2022-09-13 Tue 09:39]--[2022-09-13 Tue 10:04] =>  0:25
@@ -32,7 +34,7 @@ CLOCK: [2022-09-12 Mon 08:59]--[2022-09-12 Mon 09:24] =>  0:25
 - [X] 2.7 - How Pratt Parsing Works
 - [X] 2.8 - Extending the Parser
 - [X] Boolean Literals
-- [ ] Grouped Expressions
+- [X] Grouped Expressions
 - [ ] If Expressions
 - [ ] Function Literals
 - [ ] Call Expressions
