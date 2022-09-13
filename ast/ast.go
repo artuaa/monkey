@@ -109,7 +109,7 @@ func (es *ExpressionStatement) statementNode() {}
 
 func (es *ExpressionStatement) TokenLiteral() string { return es.Token.Literal }
 
-func (es *ExpressionStatement) String() string { return es.Token.Literal }
+func (es *ExpressionStatement) String() string { return es.Expression.String() }
 
 type IntegerLiteral struct {
 	Token token.Token
@@ -156,7 +156,9 @@ func (pe *InfixExpression) String() string {
 	var out bytes.Buffer
 	out.WriteString("(")
 	out.WriteString(pe.Left.String())
+	out.WriteString(" ")
 	out.WriteString(pe.Operator)
+	out.WriteString(" ")
 	out.WriteString(pe.Right.String())
 	out.WriteString(")")
 	return out.String()
