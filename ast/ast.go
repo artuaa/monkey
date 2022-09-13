@@ -163,3 +163,15 @@ func (pe *InfixExpression) String() string {
 	out.WriteString(")")
 	return out.String()
 }
+
+
+type Boolean struct {
+	Token token.Token
+	Value bool
+}
+
+func (es *Boolean) expressionNode() {}
+
+func (es *Boolean) TokenLiteral() string { return es.Token.Literal }
+
+func (es *Boolean) String() string { return es.Token.Literal }
