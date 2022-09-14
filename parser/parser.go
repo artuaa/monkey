@@ -49,6 +49,7 @@ func New(l *lexer.Lexer) *Parser {
 	p := &Parser{l: l, errors: []string{}}
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
 	p.infixParseFns = make(map[token.TokenType]infixParseFn)
+	p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
 	p.registerPrefix(token.IF, p.parseIfExpression)
 	p.registerPrefix(token.LPAREN, p.parseGroupedExpression)
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
@@ -335,4 +336,35 @@ func (p *Parser) parseBlockStatement() *ast.BlockStatement {
 	}
 
 	return block
+}
+
+func (p *Parser) parseFunctionLiteral() ast.Expression {
+	lit := &ast.FunctionLiteral{Token: p.curToken}
+	if !p.expectedPeek(token.LPAREN) {
+		return nil
+	}
+	lit.Parameters = p.parseFunctionParameters()
+	if !p.expectedPeek(token.LBRACE) {
+		return nil
+	}
+	lit.Body = p.parseBlockStatement()
+	return lit
+}
+
+func (p *Parser) parseFunctionParameters() []*ast.Identifier {
+	p.nextToken()
+	parameters := []*ast.Identifier{}
+	// TODO: unnest
+	for !p.curTokenIs(token.RPAREN) {
+		parameters = append(parameters, p.parseIdentifier().(*ast.Identifier))
+		if !p.peekTokenIs(token.RPAREN) {
+			if !p.expectedPeek(token.COMMA) {
+				return nil
+			}
+
+		}
+		p.nextToken()
+
+	}
+	return parameters
 }
