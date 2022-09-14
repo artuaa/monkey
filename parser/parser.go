@@ -228,7 +228,6 @@ func (p *Parser) ParseProgram() *ast.Program {
 
 func (p *Parser) parseReturnStatement() ast.Statement {
 	stmt := &ast.ReturnStatement{Token: p.curToken}
-	// TODO: parse expression
 
 	p.nextToken()
 	stmt.ReturnValue = p.parseExpression(LOWEST)
@@ -358,19 +357,24 @@ func (p *Parser) parseFunctionLiteral() ast.Expression {
 }
 
 func (p *Parser) parseFunctionParameters() []*ast.Identifier {
-	p.nextToken()
 	parameters := []*ast.Identifier{}
-	// TODO: unnest
-	for !p.curTokenIs(token.RPAREN) {
-		parameters = append(parameters, p.parseIdentifier().(*ast.Identifier))
-		if !p.peekTokenIs(token.RPAREN) {
-			if !p.expectedPeek(token.COMMA) {
-				return nil
-			}
-
-		}
+	if p.peekTokenIs(token.RPAREN) {
 		p.nextToken()
+		return parameters
+	}
 
+	p.nextToken()
+
+	parameters = append(parameters, p.parseIdentifier().(*ast.Identifier))
+
+	for p.peekTokenIs(token.COMMA) {
+		p.nextToken()
+		p.nextToken()
+		parameters = append(parameters, p.parseIdentifier().(*ast.Identifier))
+	}
+
+	if !p.expectedPeek(token.RPAREN) {
+		return nil
 	}
 	return parameters
 }
