@@ -8,7 +8,7 @@
 - [X] 1.5 - Start of a REPL
 ** 2 Parsing [23/23]
 :LOGBOOK:
-CLOCK: [2022-09-14 Wed 10:46]
+CLOCK: [2022-09-14 Wed 10:46]--[2022-09-14 Wed 11:11] =>  0:25
 CLOCK: [2022-09-14 Wed 10:01]--[2022-09-14 Wed 10:26] =>  0:25
 CLOCK: [2022-09-14 Wed 09:22]--[2022-09-14 Wed 09:47] =>  0:25
 CLOCK: [2022-09-14 Wed 08:51]--[2022-09-14 Wed 09:16] =>  0:25
@@ -44,15 +44,15 @@ CLOCK: [2022-09-12 Mon 08:59]--[2022-09-12 Mon 09:24] =>  0:25
 - [X] Call Expressions
 - [X] Removing TODOs
 - [X] 2.9 - Read-Parse-Print-Loop
-** 3 Evaluation [/]
-- [ ] 3.1 - Giving Meaning to Symbols
-- [ ] 3.2 - Strategies of Evaluation
-- [ ] 3.3 - A Tree-Walking Interpreter
-- [ ] 3.4 - Representing Objects
-- [ ] Foundation of our Object System
-- [ ] Integers
-- [ ] Booleans
-- [ ] Null
+** 3 Evaluation [8/21]
+- [X] 3.1 - Giving Meaning to Symbols
+- [X] 3.2 - Strategies of Evaluation
+- [X] 3.3 - A Tree-Walking Interpreter
+- [X] 3.4 - Representing Objects
+- [X] Foundation of our Object System
+- [X] Integers
+- [X] Booleans
+- [X] Null
 - [ ] 3.5 - Evaluating Expressions
 - [ ] Integer Literals
 - [ ] Completing the REPL
