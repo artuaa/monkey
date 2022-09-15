@@ -53,11 +53,11 @@ CLOCK: [2022-09-12 Mon 08:59]--[2022-09-12 Mon 09:24] =>  0:25
 - [X] Integers
 - [X] Booleans
 - [X] Null
-- [ ] 3.5 - Evaluating Expressions
-- [ ] Integer Literals
-- [ ] Completing the REPL
-- [ ] Boolean Literals
-- [ ] Null
+- [X] 3.5 - Evaluating Expressions
+- [X] Integer Literals
+- [X] Completing the REPL
+- [X] Boolean Literals
+- [X] Null
 - [ ] Prefix Expressions
 - [ ] Infix Expressions
 - [ ] 3.6 - Conditionals
