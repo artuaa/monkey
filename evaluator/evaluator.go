@@ -28,8 +28,40 @@ func Eval(node ast.Node) object.Object {
 		right := Eval(node.Right)
 		left := Eval(node.Left)
 		return evalInfixExpression(node.Operator, left, right)
+	case *ast.IfExpression:
+		cond := isTruthy(Eval(node.Condition))
+		if cond {
+			return Eval(node.Consequence)
+		}
+		if node.Alternative != nil {
+			return Eval(node.Alternative)
+		}
+		return NULL
+	case *ast.BlockStatement:
+		return evalBlockStatement(node.Statements)
 	}
 	return nil
+}
+
+func isTruthy(obj object.Object) bool {
+	switch obj {
+	case TRUE:
+		return true
+	case FALSE:
+		return false
+	case NULL:
+		return false
+	default:
+		return true
+	}
+}
+
+func evalBlockStatement(statements []ast.Statement) object.Object {
+	var result object.Object
+	for _, stmt := range statements {
+		result = Eval(stmt)
+	}
+	return result
 }
 
 func evalInfixExpression(op string, left, right object.Object) object.Object {
