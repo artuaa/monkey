@@ -45,6 +45,10 @@ CLOCK: [2022-09-12 Mon 08:59]--[2022-09-12 Mon 09:24] =>  0:25
 - [X] Removing TODOs
 - [X] 2.9 - Read-Parse-Print-Loop
 ** 3 Evaluation [8/21]
+:LOGBOOK:
+CLOCK: [2022-09-16 Fri 08:51]
+CLOCK: [2022-09-16 Fri 08:16]--[2022-09-16 Fri 08:41] =>  0:25
+:END:
 - [X] 3.1 - Giving Meaning to Symbols
 - [X] 3.2 - Strategies of Evaluation
 - [X] 3.3 - A Tree-Walking Interpreter
