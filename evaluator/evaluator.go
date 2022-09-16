@@ -24,8 +24,61 @@ func Eval(node ast.Node) object.Object {
 	case *ast.PrefixExpression:
 		right := Eval(node.Right)
 		return evalPrefixExpression(node.Operator, right)
+	case *ast.InfixExpression:
+		right := Eval(node.Right)
+		left := Eval(node.Left)
+		return evalInfixExpression(node.Operator, left, right)
 	}
 	return nil
+}
+
+func evalInfixExpression(op string, left, right object.Object) object.Object {
+	switch {
+	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
+		return evalIntegerInfixExpression(op, left, right)
+	case left.Type() == object.BOOLEAN_OBJ && right.Type() == object.BOOLEAN_OBJ:
+		return evalBooleanInfixExpression(op, left, right)
+	default:
+		return NULL
+	}
+}
+
+func evalBooleanInfixExpression(op string, left, right object.Object) object.Object {
+	lv := left.(*object.Boolean).Value
+	rv := right.(*object.Boolean).Value
+	switch op {
+	case "==":
+		return nativeBoolToBooleanObject(lv == rv)
+	case "!=":
+		return nativeBoolToBooleanObject(lv != rv)
+	default:
+		return NULL
+	}
+}
+
+func evalIntegerInfixExpression(op string, left object.Object, right object.Object) object.Object {
+	lv := left.(*object.Integer).Value
+	rv := right.(*object.Integer).Value
+	switch op {
+	case "-":
+		return &object.Integer{Value: lv - rv}
+	case "+":
+		return &object.Integer{Value: lv + rv}
+	case "*":
+		return &object.Integer{Value: lv * rv}
+	case "/":
+		return &object.Integer{Value: lv / rv}
+	case ">":
+		return nativeBoolToBooleanObject(lv > rv)
+	case "<":
+		return nativeBoolToBooleanObject(lv < rv)
+	case "==":
+		return nativeBoolToBooleanObject(lv == rv)
+	case "!=":
+		return nativeBoolToBooleanObject(lv != rv)
+	default:
+		return NULL
+	}
 }
 
 func evalPrefixExpression(op string, right object.Object) object.Object {

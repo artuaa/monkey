@@ -44,9 +44,10 @@ CLOCK: [2022-09-12 Mon 08:59]--[2022-09-12 Mon 09:24] =>  0:25
 - [X] Call Expressions
 - [X] Removing TODOs
 - [X] 2.9 - Read-Parse-Print-Loop
-** 3 Evaluation [8/21]
+** 3 Evaluation [14/21]
 :LOGBOOK:
-CLOCK: [2022-09-16 Fri 08:51]
+CLOCK: [2022-09-16 Fri 09:18]
+CLOCK: [2022-09-16 Fri 08:51]--[2022-09-16 Fri 09:16] =>  0:25
 CLOCK: [2022-09-16 Fri 08:16]--[2022-09-16 Fri 08:41] =>  0:25
 :END:
 - [X] 3.1 - Giving Meaning to Symbols
@@ -62,7 +63,7 @@ CLOCK: [2022-09-16 Fri 08:16]--[2022-09-16 Fri 08:41] =>  0:25
 - [X] Completing the REPL
 - [X] Boolean Literals
 - [X] Null
-- [ ] Prefix Expressions
+- [X] Prefix Expressions
 - [ ] Infix Expressions
 - [ ] 3.6 - Conditionals
 - [ ] 3.7 - Return Statements
