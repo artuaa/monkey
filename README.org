@@ -70,7 +70,7 @@ CLOCK: [2022-09-16 Fri 08:16]--[2022-09-16 Fri 08:41] =>  0:25
 - [X] 3.8 - Abort! Abort! There’s been a mistake!, or: Error Handling
 - [X] 3.9 - Bindings & The Environment
 - [X] 3.10 - Functions & Function Calls
-- [ ] 3.11 - Who’s taking the trash out?
+- [X] 3.11 - Who’s taking the trash out?
 ** 4 Extending the Interpreter [/]
 - [ ] 4.1 - Data Types & Functions
 - [ ] 4.2 - Strings
