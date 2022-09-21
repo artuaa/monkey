@@ -1,6 +1,9 @@
 package lexer
 
-import "interpreter/token"
+import (
+	"bytes"
+	"interpreter/token"
+)
 
 type Lexer struct {
 	input        string
@@ -59,6 +62,8 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.LT, l.ch)
 	case '>':
 		tok = newToken(token.GT, l.ch)
+	case '"':
+		tok = l.readString()
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
@@ -77,6 +82,16 @@ func (l *Lexer) NextToken() token.Token {
 	}
 	l.readChar()
 	return tok
+}
+
+func (l *Lexer) readString() token.Token {
+	var b bytes.Buffer
+	for l.peekChar() != '"' || l.peekChar() == 0 {
+		l.readChar()
+		b.WriteByte(l.ch)
+	}
+	l.readChar()
+	return token.Token{Type: token.STRING, Literal: b.String()}
 }
 
 func (l *Lexer) peekChar() byte {

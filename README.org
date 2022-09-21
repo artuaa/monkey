@@ -44,7 +44,7 @@ CLOCK: [2022-09-12 Mon 08:59]--[2022-09-12 Mon 09:24] =>  0:25
 - [X] Call Expressions
 - [X] Removing TODOs
 - [X] 2.9 - Read-Parse-Print-Loop
-** 3 Evaluation [18/21]
+** 3 Evaluation [21/21]
 :LOGBOOK:
 CLOCK: [2022-09-16 Fri 09:18]--[2022-09-16 Fri 09:43] =>  0:25
 CLOCK: [2022-09-16 Fri 08:51]--[2022-09-16 Fri 09:16] =>  0:25
@@ -71,15 +71,19 @@ CLOCK: [2022-09-16 Fri 08:16]--[2022-09-16 Fri 08:41] =>  0:25
 - [X] 3.9 - Bindings & The Environment
 - [X] 3.10 - Functions & Function Calls
 - [X] 3.11 - Who’s taking the trash out?
-** 4 Extending the Interpreter [/]
-- [ ] 4.1 - Data Types & Functions
-- [ ] 4.2 - Strings
-- [ ] Supporting Strings in our Lexer
-- [ ] Parsing Strings
-- [ ] Evaluating Strings
-- [ ] String Concatenation
-- [ ] 4.3 - Built-in Functions
-- [ ] len
+** 4 Extending the Interpreter [8/23]
+:LOGBOOK:
+CLOCK: [2022-09-21 Wed 09:56]
+CLOCK: [2022-09-21 Wed 09:14]--[2022-09-21 Wed 09:39] =>  0:25
+:END:
+- [X] 4.1 - Data Types & Functions
+- [X] 4.2 - Strings
+- [X] Supporting Strings in our Lexer
+- [X] Parsing Strings
+- [X] Evaluating Strings
+- [X] String Concatenation
+- [X] 4.3 - Built-in Functions
+- [X] len
 - [ ] 4.4 - Array
 - [ ] Supporting Arrays in our Lexer
 - [ ] Parsing Array Literals
