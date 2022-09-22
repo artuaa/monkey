@@ -71,8 +71,9 @@ CLOCK: [2022-09-16 Fri 08:16]--[2022-09-16 Fri 08:41] =>  0:25
 - [X] 3.9 - Bindings & The Environment
 - [X] 3.10 - Functions & Function Calls
 - [X] 3.11 - Who’s taking the trash out?
-** 4 Extending the Interpreter [8/23]
+** 4 Extending the Interpreter [11/23]
 :LOGBOOK:
+CLOCK: [2022-09-22 Thu 10:39]
 CLOCK: [2022-09-21 Wed 09:56]--[2022-09-21 Wed 10:21] =>  0:25
 CLOCK: [2022-09-21 Wed 09:14]--[2022-09-21 Wed 09:39] =>  0:25
 :END:
@@ -84,9 +85,9 @@ CLOCK: [2022-09-21 Wed 09:14]--[2022-09-21 Wed 09:39] =>  0:25
 - [X] String Concatenation
 - [X] 4.3 - Built-in Functions
 - [X] len
-- [ ] 4.4 - Array
-- [ ] Supporting Arrays in our Lexer
-- [ ] Parsing Array Literals
+- [X] 4.4 - Array
+- [X] Supporting Arrays in our Lexer
+- [X] Parsing Array Literals
 - [ ] Parsing Index Operator Expressions
 - [ ] Evaluating Array Literals
 - [ ] Evaluating Index Operator Expressions

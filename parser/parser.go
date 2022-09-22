@@ -17,6 +17,7 @@ const (
 	PRODUCT     // *
 	PREFIX      // -X or !X
 	CALL        // myFunction(X)
+	INDEX
 )
 
 var precedences = map[token.TokenType]int{
@@ -29,6 +30,7 @@ var precedences = map[token.TokenType]int{
 	token.SLASH:    PRODUCT,
 	token.ASTERISK: PRODUCT,
 	token.LPAREN:   CALL,
+	token.LBRACKET: INDEX,
 }
 
 type prefixParseFn func() ast.Expression
@@ -70,6 +72,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.LT, p.parseInfixExpression)
 	p.registerInfix(token.GT, p.parseInfixExpression)
 	p.registerInfix(token.LPAREN, p.parseCallExpression)
+	p.registerInfix(token.LBRACKET, p.parseIndexExpression)
 	p.nextToken()
 	p.nextToken()
 	return p
@@ -120,7 +123,10 @@ func (p *Parser) parseStatement() ast.Statement {
 }
 
 func (p *Parser) parseExpressionStatement() *ast.ExpressionStatement {
-	stmt := &ast.ExpressionStatement{Token: p.curToken}
+	stmt := &ast.ExpressionStatement{
+		Token:      p.curToken,
+		Expression: nil,
+	}
 	stmt.Expression = p.parseExpression(LOWEST)
 
 	if p.peekTokenIs(token.SEMICOLON) {
@@ -415,7 +421,17 @@ func (p *Parser) parseStringLiteral() ast.Expression {
 }
 
 func (p *Parser) parseArrayLiteral() ast.Expression {
-	result := &ast.ArrayLiteral{Token: p.curToken, Elements:  []ast.Expression{}}
+	result := &ast.ArrayLiteral{Token: p.curToken, Elements: []ast.Expression{}}
 	result.Elements = p.parseExpressionList(token.RBRACKET)
 	return result
+}
+
+func (p *Parser) parseIndexExpression(left ast.Expression) ast.Expression {
+	exp := &ast.IndexExpression{Token: p.curToken, Left: left}
+	p.nextToken()
+	exp.Index = p.parseExpression(LOWEST)
+	if !p.expectedPeek(token.RBRACKET) {
+		return nil
+	}
+	return exp
 }
