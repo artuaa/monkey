@@ -11,6 +11,8 @@ const (
 	RPAREN    = "RPAREN"
 	LBRACE    = "LBRACE"
 	RBRACE    = "RBRACE"
+	LBRACKET  = "["
+	RBRACKET  = "]"
 
 	// Operators
 	ASSIGN   = "="
@@ -21,8 +23,8 @@ const (
 	SLASH    = "/"
 	LT       = "<"
 	GT       = ">"
-	EQ    = "=="
-	NOT_EQ = "!="
+	EQ       = "=="
+	NOT_EQ   = "!="
 
 	// Keywords
 	FUNCTION = "FUNCTION"
@@ -33,7 +35,7 @@ const (
 	ELSE     = "ELSE"
 	RETURN   = "RETURN"
 
-	STRING   = "STRING"
+	STRING = "STRING"
 )
 
 type TokenType string
