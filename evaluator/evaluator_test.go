@@ -318,8 +318,12 @@ func TestBuiltinFunctions(t *testing.T) {
 		{`len("")`, 0},
 		{`len("four")`, 4},
 		{`len("hello world")`, 11},
-		{`len(1)`, "argument to `len` not supported, got INTEGER"},
-		{`len("one", "two")`, "wrong number of arguments. got=2, want=1"},
+		{`len([])`, 0},
+		{`len(["one", "two"])`, 2},
+		{`first(["one", "two"])`, "one"},
+		{`first([])`, nil},
+		{`last([])`, nil},
+		{`last(["one", "two"])`, "two"},
 	}
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
@@ -327,20 +331,73 @@ func TestBuiltinFunctions(t *testing.T) {
 		case int:
 			testIntegerObject(t, evaluated, int64(expected))
 		case string:
-			errObj, ok := evaluated.(*object.Error)
-			if !ok {
-				t.Errorf("object is not Error. got=%T (%+v)",
-					evaluated, evaluated)
-				continue
-			}
-			if errObj.Message != expected {
-				t.Errorf("wrong error message. expected=%q, got=%q",
-					expected, errObj.Message)
+			testStringObject(t, evaluated, expected)
+		case nil:
+			if evaluated != NULL {
+				t.Errorf("object is not a null. got=%T", evaluated)
 			}
 		}
 	}
+
+	errorTests := []struct {
+		input    string
+		expected string
+	}{
+		{`len(1)`, "argument to `len` not supported, got INTEGER"},
+		{`len("one", "two")`, "wrong number of arguments. got=2, want=1"},
+		{`last(1)`, "argument to `last` not supported, got INTEGER"},
+		{`first(1)`, "argument to `first` not supported, got INTEGER"},
+	}
+	for _, tt := range errorTests {
+		evaluated := testEval(tt.input)
+		errObj, ok := evaluated.(*object.Error)
+		if !ok {
+			t.Errorf("object is not Error. got=%T (%+v)",
+				evaluated, evaluated)
+			continue
+		}
+		if errObj.Message != tt.expected {
+			t.Errorf("wrong error message. expected=%q, got=%q",
+				tt.expected, errObj.Message)
+		}
+	}
+
+	inspectTests := []struct {
+		input    string
+		expected string
+	}{
+		{`rest(["one", "two", "three"])`, `[two, three]`},
+		{`rest(["one"])`, `[]`},
+		{`push(["one"], "two")`, `[one, two]`},
+	}
+	for _, tt := range inspectTests {
+		evaluated := testEval(tt.input)
+		testObject(t, evaluated, tt.expected)
+	}
 }
 
+func testStringObject(t *testing.T, obj object.Object, expected string) bool {
+	t.Helper()
+	result, ok := obj.(*object.String)
+	if !ok {
+		t.Errorf("object is not a string. got=%T (%+v)", obj, obj)
+		return false
+	}
+	if result.Value != expected {
+		t.Errorf("object has wrong value. got=%s, want=%s",
+			result.Value, expected)
+	}
+	return false
+}
+
+func testObject(t *testing.T, obj object.Object, expected string) bool {
+	t.Helper()
+	if value := obj.Inspect(); value != expected {
+		t.Errorf("object has wrong value. got=%s, want=%s",
+			value, expected)
+	}
+	return false
+}
 func TestArrayLiterals(t *testing.T) {
 	input := "[1, 2 * 2, 3 + 3]"
 	evaluated := testEval(input)
