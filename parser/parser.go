@@ -52,6 +52,7 @@ func New(l *lexer.Lexer) *Parser {
 	p := &Parser{l: l, errors: []string{}}
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
 	p.infixParseFns = make(map[token.TokenType]infixParseFn)
+	p.registerPrefix(token.LBRACE, p.parseMapLiteral)
 	p.registerPrefix(token.LBRACKET, p.parseArrayLiteral)
 	p.registerPrefix(token.STRING, p.parseStringLiteral)
 	p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
@@ -434,4 +435,38 @@ func (p *Parser) parseIndexExpression(left ast.Expression) ast.Expression {
 		return nil
 	}
 	return exp
+}
+
+func (p *Parser) parseMapLiteral() ast.Expression {
+	end := token.TokenType(token.RBRACE)
+	entries := make(map[ast.Expression]ast.Expression)
+	if p.peekTokenIs(end) {
+		p.nextToken()
+		return &ast.MapLiteral{Entry: entries}
+	}
+	p.nextToken()
+	key := p.parseExpression(LOWEST)
+	if !p.expectedPeek(token.COLON) {
+		return nil
+	}
+	p.nextToken()
+	value := p.parseExpression(LOWEST)
+	entries[key] = value
+
+	for p.peekTokenIs(token.COMMA) {
+		p.nextToken()
+		p.nextToken()
+		key := p.parseExpression(LOWEST)
+		if !p.expectedPeek(token.COLON) {
+			return nil
+		}
+		p.nextToken()
+		value := p.parseExpression(LOWEST)
+		entries[key] = value
+	}
+
+	if !p.expectedPeek(end) {
+		return nil
+	}
+	return &ast.MapLiteral{Entry: entries}
 }

@@ -13,6 +13,7 @@ const (
 	RBRACE    = "RBRACE"
 	LBRACKET  = "["
 	RBRACKET  = "]"
+	COLON     = ":"
 
 	// Operators
 	ASSIGN   = "="

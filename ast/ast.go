@@ -293,7 +293,7 @@ func (al *ArrayLiteral) String() string {
 }
 
 type IndexExpression struct {
-	Token token.Token // The 'if' token
+	Token token.Token
 	Left  Expression
 	Index Expression
 }
@@ -309,5 +309,27 @@ func (ie *IndexExpression) String() string {
 	out.WriteString("[")
 	out.WriteString(ie.Index.String())
 	out.WriteString("])")
+	return out.String()
+}
+
+type MapLiteral struct {
+	Token token.Token
+	Entry map[Expression]Expression
+}
+
+func (ml *MapLiteral) expressionNode() {}
+
+func (ml *MapLiteral) TokenLiteral() string { return ml.Token.Literal }
+
+func (ml *MapLiteral) String() string {
+	var out bytes.Buffer
+	out.WriteString("{")
+	for key := range ml.Entry {
+		out.WriteString(key.String())
+		out.WriteString(": ")
+		out.WriteString(ml.Entry[key].String())
+		out.WriteString(", ")
+	}
+	out.WriteString("}")
 	return out.String()
 }

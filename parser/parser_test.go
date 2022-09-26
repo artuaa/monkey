@@ -659,3 +659,16 @@ func TestParsingIndexExpressions(t *testing.T) {
 		return
 	}
 }
+
+func TestParsingMapLiterals(t *testing.T) {
+	input := `{"name": "john", "age": 32}`
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	_, ok = stmt.Expression.(*ast.MapLiteral)
+	if !ok {
+		t.Fatalf("exp not ast.MapLiteral. got=%T", stmt.Expression)
+	}
+}

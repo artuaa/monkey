@@ -92,10 +92,10 @@ CLOCK: [2022-09-21 Wed 09:14]--[2022-09-21 Wed 09:39] =>  0:25
 - [X] Evaluating Array Literals
 - [X] Evaluating Index Operator Expressions
 - [X] Adding Built-in Functions for Arrays
-- [ ] Test-Driving Arrays
-- [ ] 4.5 - Hashes
-- [ ] Lexing Hash Literals
-- [ ] Parsing Hash Literals
+- [X] Test-Driving Arrays
+- [X] 4.5 - Hashes
+- [X] Lexing Hash Literals
+- [X] Parsing Hash Literals
 - [ ] Hashing Objects
 - [ ] Evaluating Hash Literals
 - [ ] Evaluating Index Expressions With Hashes
