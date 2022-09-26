@@ -442,7 +442,7 @@ func (p *Parser) parseMapLiteral() ast.Expression {
 	entries := make(map[ast.Expression]ast.Expression)
 	if p.peekTokenIs(end) {
 		p.nextToken()
-		return &ast.MapLiteral{Entry: entries}
+		return &ast.HashLiteral{Pairs: entries}
 	}
 	p.nextToken()
 	key := p.parseExpression(LOWEST)
@@ -468,5 +468,5 @@ func (p *Parser) parseMapLiteral() ast.Expression {
 	if !p.expectedPeek(end) {
 		return nil
 	}
-	return &ast.MapLiteral{Entry: entries}
+	return &ast.HashLiteral{Pairs: entries}
 }

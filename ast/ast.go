@@ -312,22 +312,22 @@ func (ie *IndexExpression) String() string {
 	return out.String()
 }
 
-type MapLiteral struct {
+type HashLiteral struct {
 	Token token.Token
-	Entry map[Expression]Expression
+	Pairs map[Expression]Expression
 }
 
-func (ml *MapLiteral) expressionNode() {}
+func (ml *HashLiteral) expressionNode() {}
 
-func (ml *MapLiteral) TokenLiteral() string { return ml.Token.Literal }
+func (ml *HashLiteral) TokenLiteral() string { return ml.Token.Literal }
 
-func (ml *MapLiteral) String() string {
+func (ml *HashLiteral) String() string {
 	var out bytes.Buffer
 	out.WriteString("{")
-	for key := range ml.Entry {
+	for key := range ml.Pairs {
 		out.WriteString(key.String())
 		out.WriteString(": ")
-		out.WriteString(ml.Entry[key].String())
+		out.WriteString(ml.Pairs[key].String())
 		out.WriteString(", ")
 	}
 	out.WriteString("}")

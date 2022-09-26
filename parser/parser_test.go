@@ -667,7 +667,7 @@ func TestParsingMapLiterals(t *testing.T) {
 	program := p.ParseProgram()
 	checkParserErrors(t, p)
 	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
-	_, ok = stmt.Expression.(*ast.MapLiteral)
+	_, ok = stmt.Expression.(*ast.HashLiteral)
 	if !ok {
 		t.Fatalf("exp not ast.MapLiteral. got=%T", stmt.Expression)
 	}
