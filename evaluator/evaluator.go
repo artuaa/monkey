@@ -64,8 +64,8 @@ var builtins = map[string]*object.Builtin{
 			}
 			switch arg := args[0].(type) {
 			case *object.Array:
-				if lenght := len(arg.Elements); lenght > 1 {
-					elms := make([]object.Object, lenght-1, lenght-1)
+				if length := len(arg.Elements); length > 1 {
+					elms := make([]object.Object, length-1, length-1)
 					copy(elms, arg.Elements[1:])
 					return &object.Array{Elements: elms}
 				}
@@ -180,12 +180,53 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 			return index
 		}
 		return evalIndexExpression(left, index)
-
+	case *ast.HashLiteral:
+		result := &object.Hash{}
+		result.Pairs = make(map[object.HashKey]object.HashPair)
+		for key, val := range node.Pairs {
+			k := Eval(key, env)
+			if isError(k) {
+				return k
+			}
+			v := Eval(val, env)
+			if isError(v) {
+				return v
+			}
+			hashKey, ok := k.(object.Hashable)
+			if !ok {
+				return newError("unusable as hash key: %s", k.Type())
+			}
+			result.Pairs[hashKey.HashKey()] = object.HashPair{Key: k, Value: v}
+		}
+		return result
 	}
 	return nil
 }
 
-func evalIndexExpression(array, index object.Object) object.Object {
+func evalIndexExpression(left, index object.Object) object.Object {
+	switch left.Type() {
+	case object.ARRAY_OBJ:
+		return evalArrayIndexExpression(left, index)
+	case object.HASH_OBJ:
+		return evalHashIndexExpression(left, index)
+	}
+	return newError("index operator not supported %s", left.Type())
+}
+
+func evalHashIndexExpression(left, index object.Object) object.Object {
+	hash := left.(*object.Hash)
+	key, ok := index.(object.Hashable)
+	if !ok {
+		return newError("unusable as hash key: %s", index.Type())
+	}
+	result, ok := hash.Pairs[key.HashKey()]
+	if !ok {
+		return NULL
+	}
+	return result.Value
+}
+
+func evalArrayIndexExpression(array, index object.Object) object.Object {
 	if array.Type() == object.ARRAY_OBJ && index.Type() == object.INTEGER_OBJ {
 		idx := index.(*object.Integer).Value
 		elms := array.(*object.Array).Elements
@@ -194,9 +235,7 @@ func evalIndexExpression(array, index object.Object) object.Object {
 		}
 		return elms[idx]
 	}
-
 	return newError("index operator not supported %s", array.Type())
-
 }
 
 func applyFunction(fn object.Object, args []object.Object) object.Object {
@@ -247,7 +286,7 @@ func evalIdentifier(node *ast.Identifier, env *object.Environment) object.Object
 		return builtin
 	}
 
-	return newError("identifier not found %s", node.Value)
+	return newError("identifier not found: %s", node.Value)
 }
 
 func isError(obj object.Object) bool {

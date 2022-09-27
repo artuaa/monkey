@@ -73,6 +73,6 @@
 - [X] Lexing Hash Literals
 - [X] Parsing Hash Literals
 - [X] Hashing Objects
-- [ ] Evaluating Hash Literals
-- [ ] Evaluating Index Expressions With Hashes
+- [X] Evaluating Hash Literals
+- [X] Evaluating Index Expressions With Hashes
 - [ ] 4.6 - The Grand Finale
