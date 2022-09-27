@@ -52,7 +52,7 @@
 - [X] 3.9 - Bindings & The Environment
 - [X] 3.10 - Functions & Function Calls
 - [X] 3.11 - Who’s taking the trash out?
-** 4 Extending the Interpreter [14/23]
+** 4 Extending the Interpreter [23/23]
 - [X] 4.1 - Data Types & Functions
 - [X] 4.2 - Strings
 - [X] Supporting Strings in our Lexer
@@ -75,4 +75,4 @@
 - [X] Hashing Objects
 - [X] Evaluating Hash Literals
 - [X] Evaluating Index Expressions With Hashes
-- [ ] 4.6 - The Grand Finale
+- [X] 4.6 - The Grand Final
