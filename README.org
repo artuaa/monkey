@@ -7,20 +7,6 @@
 - [X] 1.4 - Extending our Token Set and Lexer
 - [X] 1.5 - Start of a REPL
 ** 2 Parsing [23/23]
-:LOGBOOK:
-CLOCK: [2022-09-14 Wed 10:46]--[2022-09-14 Wed 11:11] =>  0:25
-CLOCK: [2022-09-14 Wed 10:01]--[2022-09-14 Wed 10:26] =>  0:25
-CLOCK: [2022-09-14 Wed 09:22]--[2022-09-14 Wed 09:47] =>  0:25
-CLOCK: [2022-09-14 Wed 08:51]--[2022-09-14 Wed 09:16] =>  0:25
-CLOCK: [2022-09-13 Tue 12:04]--[2022-09-13 Tue 12:18] =>  0:14
-CLOCK: [2022-09-13 Tue 11:30]--[2022-09-13 Tue 11:55] =>  0:25
-CLOCK: [2022-09-13 Tue 10:53]--[2022-09-13 Tue 11:18] =>  0:25
-CLOCK: [2022-09-13 Tue 10:11]--[2022-09-13 Tue 10:36] =>  0:25
-CLOCK: [2022-09-13 Tue 09:39]--[2022-09-13 Tue 10:04] =>  0:25
-CLOCK: [2022-09-12 Mon 10:31]--[2022-09-12 Mon 10:56] =>  0:25
-CLOCK: [2022-09-12 Mon 09:49]--[2022-09-12 Mon 10:14] =>  0:25
-CLOCK: [2022-09-12 Mon 08:59]--[2022-09-12 Mon 09:24] =>  0:25
-:END:
 - [X] 2.1 - Parsers
 - [X] 2.2 - Why not a parser generator?
 - [X] 2.3 - Writing a Parser for the Monkey Programming Language
@@ -45,11 +31,6 @@ CLOCK: [2022-09-12 Mon 08:59]--[2022-09-12 Mon 09:24] =>  0:25
 - [X] Removing TODOs
 - [X] 2.9 - Read-Parse-Print-Loop
 ** 3 Evaluation [21/21]
-:LOGBOOK:
-CLOCK: [2022-09-16 Fri 09:18]--[2022-09-16 Fri 09:43] =>  0:25
-CLOCK: [2022-09-16 Fri 08:51]--[2022-09-16 Fri 09:16] =>  0:25
-CLOCK: [2022-09-16 Fri 08:16]--[2022-09-16 Fri 08:41] =>  0:25
-:END:
 - [X] 3.1 - Giving Meaning to Symbols
 - [X] 3.2 - Strategies of Evaluation
 - [X] 3.3 - A Tree-Walking Interpreter
@@ -72,11 +53,6 @@ CLOCK: [2022-09-16 Fri 08:16]--[2022-09-16 Fri 08:41] =>  0:25
 - [X] 3.10 - Functions & Function Calls
 - [X] 3.11 - Who’s taking the trash out?
 ** 4 Extending the Interpreter [14/23]
-:LOGBOOK:
-CLOCK: [2022-09-22 Thu 10:39]--[2022-09-22 Thu 11:04] =>  0:25
-CLOCK: [2022-09-21 Wed 09:56]--[2022-09-21 Wed 10:21] =>  0:25
-CLOCK: [2022-09-21 Wed 09:14]--[2022-09-21 Wed 09:39] =>  0:25
-:END:
 - [X] 4.1 - Data Types & Functions
 - [X] 4.2 - Strings
 - [X] Supporting Strings in our Lexer
@@ -96,7 +72,7 @@ CLOCK: [2022-09-21 Wed 09:14]--[2022-09-21 Wed 09:39] =>  0:25
 - [X] 4.5 - Hashes
 - [X] Lexing Hash Literals
 - [X] Parsing Hash Literals
-- [ ] Hashing Objects
+- [X] Hashing Objects
 - [ ] Evaluating Hash Literals
 - [ ] Evaluating Index Expressions With Hashes
 - [ ] 4.6 - The Grand Finale
