@@ -77,22 +77,22 @@
 - [X] Evaluating Index Expressions With Hashes
 - [X] 4.6 - The Grand Final
 * Writing An Compiler In Go
-** Introduction [/]
- - [ ] Evolving Monkey
- - [ ] The Past and Present
- - [ ] The Future
- - [ ] Use This Book
-** 1 Compilers & Virtual Machines [/]
- - [ ] Compilers
- - [ ] Virtual and Real Machines
- - [ ] Real Machines
- - [ ] What Is a Virtual Machine?
- - [ ] Why Build One?
- - [ ] Bytecode
- - [ ] What We’re Going to Do, or: the Duality of VM and Compiler
- - [ ] 2 Hello Bytecode! 26
- - [ ] First Instructions
- - [ ] Starting With Bytes
+** Introduction [4/4]
+ - [X] Evolving Monkey
+ - [X] The Past and Present
+ - [X] The Future
+ - [X] Use This Book
+** 1 Compilers & Virtual Machines [3/7]
+ - [X] Compiles
+ - [X] Virtual and Real Machines
+ - [X] Real Machines
+ - [X] What Is a Virtual Machine?
+ - [X] Why Build One?
+ - [X] Bytecode
+ - [X] What We’re Going to Do, or: the Duality of VM and Compiler
+** 2 Hello Bytecode! [2/8]
+ - [X] First Instructions
+ - [X] Starting With Bytes
  - [ ] The Smallest Compiler
  - [ ] Bytecode, Disassemble!
  - [ ] Back to the Task at Hand
