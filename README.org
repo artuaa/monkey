@@ -93,7 +93,7 @@
 ** 2 Hello Bytecode! [2/8]
  - [X] First Instructions
  - [X] Starting With Bytes
- - [ ] The Smallest Compiler
+ - [X] The Smallest Compiler
  - [ ] Bytecode, Disassemble!
  - [ ] Back to the Task at Hand
  - [ ] Powering On the Machine
