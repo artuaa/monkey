@@ -96,7 +96,7 @@
  - [X] The Smallest Compiler
  - [X] Bytecode, Disassemble!
  - [X] Back to the Task at Hand
- - [ ] Powering On the Machine
+ - [X] Powering On the Machine
  - [ ] Adding on the Stack
  - [ ] Hooking up the REPL
 ** 3 Compiling Expressions [/]
