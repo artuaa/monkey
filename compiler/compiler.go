@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"fmt"
 	"interpreter/ast"
 	"interpreter/code"
 	"interpreter/lexer"
@@ -43,6 +44,12 @@ func (c *Compiler) Compile(node ast.Node) error {
 		if err != nil {
 			return err
 		}
+		switch node.Operator {
+		case "+":
+			c.emit(code.OpAdd)
+		default:
+			return fmt.Errorf("unknown operator %s", node.Operator)
+		}
 	case *ast.IntegerLiteral:
 		integer := &object.Integer{Value: node.Value}
 		c.emit(code.OpConstant, c.addConstant(integer))
@@ -53,7 +60,7 @@ func (c *Compiler) Compile(node ast.Node) error {
 func (c *Compiler) emit(opcode code.Opcode, operands ...int) int {
 	ins := code.Make(opcode, operands...)
 	pos := c.addInstruction(ins)
-	return  pos
+	return pos
 }
 
 func (c *Compiler) addInstruction(ins []byte) int {

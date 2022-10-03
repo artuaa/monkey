@@ -8,6 +8,7 @@ import (
 
 const (
 	OpConstant Opcode = iota
+	OpAdd
 )
 
 type Instructions []byte
@@ -21,6 +22,7 @@ type Definition struct {
 
 var definitions = map[Opcode]*Definition{
 	OpConstant: {"OpConstant", []int{2}},
+	OpAdd:      {"OpAdd", []int{}},
 }
 
 func Lookup(op byte) (*Definition, error) {
@@ -67,10 +69,13 @@ func (instructions Instructions) String() string {
 		}
 		operands, read := ReadOperands(def, instructions[i+1:])
 		out.WriteString(fmt.Sprintf("%04d ", i))
-		out.WriteString(def.Name)
-		for _, o := range operands {
-			out.WriteString(fmt.Sprintf(" %d", o))
-			out.WriteString("\n\t")
+		switch len(operands) {
+		case 0:
+			out.WriteString(def.Name + "\n\t")
+		case 1:
+			out.WriteString(fmt.Sprintf("%s %d\n\t", def.Name, operands[0]))
+		default:
+			out.WriteString(fmt.Sprintf("ERROR: unhandled operandCount for %s\n", def.Name))
 		}
 		i += 1 + read
 	}
