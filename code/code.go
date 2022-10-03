@@ -1,6 +1,7 @@
 package code
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 )
@@ -57,23 +58,23 @@ func Make(op Opcode, operands ...int) []byte {
 }
 
 func (instructions Instructions) String() string {
-	// var out = bytes.Buffer{}
-	// offset := 0
-	// for j, _ := range instructions {
-	// 	fmt.Print(j)
-	// 	def, _ := definitions[Opcode(instructions[offset])]
-	// 	out.WriteString(def.Name)
-	// 	for i, _ := range def.OperandWiths {
-	// 		width := def.OperandWiths[i]
-	// 		switch width {
-	// 		case 2:
-	// 			out.WriteString(" " + fmt.Sprint((binary.BigEndian.Uint16(instructions[offset : offset+width]))))
-	// 		}
-	// 		offset += width
-	// 	}
-	// }
-	// return out.String()
-	return ""
+	var out = bytes.Buffer{}
+	i := 0
+	for i < len(instructions) {
+		def, err := Lookup(instructions[i])
+		if err != nil {
+			fmt.Fprintf(&out, "ERROR: %s\n", err)
+		}
+		operands, read := ReadOperands(def, instructions[i+1:])
+		out.WriteString(fmt.Sprintf("%04d ", i))
+		out.WriteString(def.Name)
+		for _, o := range operands {
+			out.WriteString(fmt.Sprintf(" %d", o))
+			out.WriteString("\n\t")
+		}
+		i += 1 + read
+	}
+	return out.String()
 }
 
 func ReadOperands(def *Definition, ins Instructions) ([]int, int) {

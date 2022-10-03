@@ -90,12 +90,12 @@
  - [X] Why Build One?
  - [X] Bytecode
  - [X] What We’re Going to Do, or: the Duality of VM and Compiler
-** 2 Hello Bytecode! [2/8]
+** 2 Hello Bytecode! [5/8]
  - [X] First Instructions
  - [X] Starting With Bytes
  - [X] The Smallest Compiler
- - [ ] Bytecode, Disassemble!
- - [ ] Back to the Task at Hand
+ - [X] Bytecode, Disassemble!
+ - [X] Back to the Task at Hand
  - [ ] Powering On the Machine
  - [ ] Adding on the Stack
  - [ ] Hooking up the REPL
