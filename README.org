@@ -101,7 +101,7 @@
  - [X] Hooking up the REPL
 ** 3 Compiling Expressions [/]
  - [X] Cleaning Up the Stack
- - [ ] Infix Expressions
+ - [X] Infix Expressions
  - [ ] Booleans
  - [ ] Comparison Operators
  - [ ] Prefix Expressions
