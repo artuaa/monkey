@@ -100,7 +100,7 @@
  - [x] Adding on the Stack
  - [X] Hooking up the REPL
 ** 3 Compiling Expressions [/]
- - [ ] Cleaning Up the Stack
+ - [X] Cleaning Up the Stack
  - [ ] Infix Expressions
  - [ ] Booleans
  - [ ] Comparison Operators
