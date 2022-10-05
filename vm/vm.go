@@ -87,41 +87,39 @@ func (vm *VM) executeBinaryOperation(op code.Opcode) error {
 func (vm *VM) executeBinaryIntegerOperation(left, right object.Object, op code.Opcode) error {
 	lv := left.(*object.Integer).Value
 	rv := right.(*object.Integer).Value
-	var result int64
 	switch op {
 	case code.OpAdd:
-		result = lv + rv
+		return vm.push(&object.Integer{Value: lv + rv})
 	case code.OpSub:
-		result = lv - rv
+		return vm.push(&object.Integer{Value: lv - rv})
 	case code.OpMul:
-		result = lv * rv
+		return vm.push(&object.Integer{Value: lv * rv})
 	case code.OpDiv:
-		result = lv / rv
-    case code.OpEqual:
-		return vm.push(nativeBoolToBooleanObject(lv == rv ))
+		return vm.push(&object.Integer{Value: lv / rv})
+	case code.OpEqual:
+		return vm.push(nativeBoolToBooleanObject(lv == rv))
 	case code.OpNotEqual:
-		return vm.push(nativeBoolToBooleanObject(lv != rv ))
+		return vm.push(nativeBoolToBooleanObject(lv != rv))
 	case code.OpGreaterThan:
-		return vm.push(nativeBoolToBooleanObject(lv > rv ))
+		return vm.push(nativeBoolToBooleanObject(lv > rv))
 	default:
 		return fmt.Errorf("unknown integer operator: %d", op)
 	}
-	return vm.push(&object.Integer{Value: result})
 }
 func (vm *VM) executeBinaryBooleanOperation(left, right object.Object, op code.Opcode) error {
 	lv := left.(*object.Boolean).Value
 	rv := right.(*object.Boolean).Value
 	switch op {
 	case code.OpEqual:
-		return vm.push(nativeBoolToBooleanObject(lv == rv ))
+		return vm.push(nativeBoolToBooleanObject(lv == rv))
 	case code.OpNotEqual:
-		return vm.push(nativeBoolToBooleanObject(lv != rv ))
+		return vm.push(nativeBoolToBooleanObject(lv != rv))
 	default:
 		return fmt.Errorf("unknown integer operator: %d", op)
 	}
 }
 
-func nativeBoolToBooleanObject(v bool) *object.Boolean{
+func nativeBoolToBooleanObject(v bool) *object.Boolean {
 	if v {
 		return True
 	}
