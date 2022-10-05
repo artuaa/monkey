@@ -10,6 +10,9 @@ import (
 
 const StackSize = 2048
 
+var True = &object.Boolean{Value: true}
+var False = &object.Boolean{Value: false}
+
 type VM struct {
 	constants    []object.Object
 	instructions code.Instructions
@@ -47,6 +50,22 @@ func (vm *VM) Run() error {
 			vm.executeBinaryOperation(op)
 		case code.OpMul:
 			vm.executeBinaryOperation(op)
+		case code.OpEqual:
+			vm.executeBinaryOperation(op)
+		case code.OpNotEqual:
+			vm.executeBinaryOperation(op)
+		case code.OpGreaterThan:
+			vm.executeBinaryOperation(op)
+		case code.OpTrue:
+			err := vm.push(True)
+			if err != nil {
+				return err
+			}
+		case code.OpFalse:
+			err := vm.push(False)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -58,6 +77,9 @@ func (vm *VM) executeBinaryOperation(op code.Opcode) error {
 
 	if left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ {
 		return vm.executeBinaryIntegerOperation(left, right, op)
+	}
+	if left.Type() == object.BOOLEAN_OBJ && right.Type() == object.BOOLEAN_OBJ {
+		return vm.executeBinaryBooleanOperation(left, right, op)
 	}
 	return fmt.Errorf("unsupported types for binary operation: %s %s", left.Type(), right.Type())
 }
@@ -75,10 +97,35 @@ func (vm *VM) executeBinaryIntegerOperation(left, right object.Object, op code.O
 		result = lv * rv
 	case code.OpDiv:
 		result = lv / rv
+    case code.OpEqual:
+		return vm.push(nativeBoolToBooleanObject(lv == rv ))
+	case code.OpNotEqual:
+		return vm.push(nativeBoolToBooleanObject(lv != rv ))
+	case code.OpGreaterThan:
+		return vm.push(nativeBoolToBooleanObject(lv > rv ))
 	default:
 		return fmt.Errorf("unknown integer operator: %d", op)
 	}
 	return vm.push(&object.Integer{Value: result})
+}
+func (vm *VM) executeBinaryBooleanOperation(left, right object.Object, op code.Opcode) error {
+	lv := left.(*object.Boolean).Value
+	rv := right.(*object.Boolean).Value
+	switch op {
+	case code.OpEqual:
+		return vm.push(nativeBoolToBooleanObject(lv == rv ))
+	case code.OpNotEqual:
+		return vm.push(nativeBoolToBooleanObject(lv != rv ))
+	default:
+		return fmt.Errorf("unknown integer operator: %d", op)
+	}
+}
+
+func nativeBoolToBooleanObject(v bool) *object.Boolean{
+	if v {
+		return True
+	}
+	return False
 }
 
 func (vm *VM) push(c object.Object) error {

@@ -97,7 +97,7 @@
  - [X] Bytecode, Disassemble!
  - [X] Back to the Task at Hand
  - [X] Powering On the Machine
- - [x] Adding on the Stack
+ - [X] Adding on the Stack
  - [X] Hooking up the REPL
 ** 3 Compiling Expressions [/]
  - [X] Cleaning Up the Stack
