@@ -66,9 +66,40 @@ func (vm *VM) Run() error {
 			if err != nil {
 				return err
 			}
+		case code.OpBang:
+			err := vm.executeBangOperator()
+			if err != nil {
+				return err
+			}
+		case code.OpMinus:
+			err := vm.executeMinusOperator()
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
+}
+
+func (vm *VM) executeMinusOperator() error {
+	operand := vm.pop()
+	if operand.Type() == object.INTEGER_OBJ {
+		rv := operand.(*object.Integer).Value
+		return vm.push(&object.Integer{Value: -rv})
+	}
+	return fmt.Errorf("unsupported type for minus operation: %s", operand.Type())
+}
+
+func (vm *VM) executeBangOperator() error {
+	operand := vm.pop()
+	switch operand {
+	case True:
+		return vm.push(False)
+	case False:
+		return vm.push(True)
+	default:
+		return vm.push(False)
+	}
 }
 
 func (vm *VM) executeBinaryOperation(op code.Opcode) error {

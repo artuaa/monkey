@@ -82,7 +82,7 @@
  - [X] The Past and Present
  - [X] The Future
  - [X] Use This Book
-** 1 Compilers & Virtual Machines [3/7]
+** 1 Compilers & Virtual Machines [7/7]
  - [X] Compiles
  - [X] Virtual and Real Machines
  - [X] Real Machines
@@ -90,7 +90,7 @@
  - [X] Why Build One?
  - [X] Bytecode
  - [X] What We’re Going to Do, or: the Duality of VM and Compiler
-** 2 Hello Bytecode! [5/8]
+** 2 Hello Bytecode! [8/8]
  - [X] First Instructions
  - [X] Starting With Bytes
  - [X] The Smallest Compiler
@@ -99,12 +99,12 @@
  - [X] Powering On the Machine
  - [X] Adding on the Stack
  - [X] Hooking up the REPL
-** 3 Compiling Expressions [/]
+** 3 Compiling Expressions [5/5]
  - [X] Cleaning Up the Stack
  - [X] Infix Expressions
- - [ ] Booleans
- - [ ] Comparison Operators
- - [ ] Prefix Expressions
+ - [X] Booleans
+ - [X] Comparison Operators
+ - [X] Prefix Expressions
 ** 4 Conditionals [/]
  - [ ] Jumps
  - [ ] Compiling Conditionals

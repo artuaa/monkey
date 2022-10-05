@@ -41,12 +41,12 @@ func runVmTests(t *testing.T, tests []vmTestCase) {
 		comp := compiler.New()
 		err := comp.Compile(program)
 		if err != nil {
-			t.Fatalf("'%s' compiler error: %s",tt.input, err)
+			t.Fatalf("'%s' compiler error: %s", tt.input, err)
 		}
 		vm := New(comp.Bytecode())
 		err = vm.Run()
 		if err != nil {
-			t.Fatalf("'%s' vm error: %s",tt.input, err)
+			t.Fatalf("'%s' vm error: %s", tt.input, err)
 		}
 		stackElem := vm.LastPoppedStackElem()
 		testExpectedObject(t, tt.input, tt.expected, stackElem)
@@ -63,12 +63,12 @@ func testExpectedObject(
 	case int:
 		err := testIntegerObject(int64(expected), actual)
 		if err != nil {
-			t.Errorf("'%s' testIntegerObject failed: %s",name, err)
+			t.Errorf("'%s' testIntegerObject failed: %s", name, err)
 		}
 	case bool:
 		err := testBooleanObject(bool(expected), actual)
 		if err != nil {
-			t.Errorf("'%s' testBooleanObject failed: %s",name, err)
+			t.Errorf("'%s' testBooleanObject failed: %s", name, err)
 		}
 	}
 }
@@ -117,6 +117,10 @@ func TestIntegerArithmetic(t *testing.T) {
 		{"(1 < 2) == false", false},
 		{"(1 > 2) == true", false},
 		{"(1 > 2) == false", true},
+		{"-5", -5},
+		{"-10", -10},
+		{"-50 + 100 + -50", 0},
+		{"(5 + 10 * 2 + 15 / 3) * 2 + -10", 50},
 	}
 	runVmTests(t, tests)
 }
@@ -125,6 +129,12 @@ func TestBooleanExpressions(t *testing.T) {
 	tests := []vmTestCase{
 		{"true", true},
 		{"false", false},
+		{"!true", false},
+		{"!false", true},
+		{"!5", false},
+		{"!!true", true},
+		{"!!false", false},
+		{"!!5", true},
 	}
 	runVmTests(t, tests)
 }
