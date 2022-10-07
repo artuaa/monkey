@@ -120,17 +120,33 @@ func (c *Compiler) Compile(node ast.Node) error {
 		if err != nil {
 			return err
 		}
-		// FIXME: calculate offset
-		jumpToTruthyPos := c.emit(code.OpJumpNotTruthy, 9999)
+		jumpNotTruthy := c.emit(code.OpJumpNotTruthy, 9999)
 		err = c.Compile(node.Consequence)
 		if err != nil {
 			return err
 		}
-		if c.lastInstructionIsPop(){
+		if c.lastInstructionIsPop() {
 			c.removeLastPop()
 		}
-		afterConsequencePos := len(c.instructions)
-		c.changeOperand(jumpToTruthyPos, afterConsequencePos)
+		if node.Alternative == nil {
+			afterConsequencePos := len(c.instructions)
+			c.changeOperand(jumpNotTruthy, afterConsequencePos)
+		} else {
+			jumpPos := c.emit(code.OpJump, 9999)
+			afterConsequencePos := len(c.instructions)
+			c.changeOperand(jumpNotTruthy, afterConsequencePos)
+
+			err := c.Compile(node.Alternative)
+			if err != nil {
+				return err
+			}
+			if c.lastInstructionIsPop() {
+				c.removeLastPop()
+			}
+			afterAlternativePos := len(c.instructions)
+			c.changeOperand(jumpPos, afterAlternativePos)
+		}
+
 	}
 	return nil
 }
@@ -152,7 +168,7 @@ func (c *Compiler) replaceInstruction(opPos int, ins []byte) {
 	}
 }
 
-func (c *Compiler)lastInstructionIsPop() bool{
+func (c *Compiler) lastInstructionIsPop() bool {
 	return c.lastInstruction.Opcode == code.OpPop
 }
 

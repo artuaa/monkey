@@ -87,29 +87,29 @@ func runCompilerTests(t *testing.T, tests []compilerTestCase) {
 			t.Fatalf("compiler error: %s", err)
 		}
 		bytecode := compiler.Bytecode()
-		err = testInstructions(t, tt.expectedInstructions, bytecode.Instructions)
+		err = testInstructions(t, tt.input, tt.expectedInstructions, bytecode.Instructions)
 		if err != nil {
 			t.Fatalf("testInstructions failed: %s", err)
 		}
-		err = testConstants(t, tt.expectedConstants, bytecode.Constants)
+		err = testConstants(t, tt.input, tt.expectedConstants, bytecode.Constants)
 		if err != nil {
 			t.Fatalf("testConstants failed: %s", err)
 		}
 	}
 }
 
-func testInstructions(t *testing.T, expected []code.Instructions, actual code.Instructions) error {
+func testInstructions(t *testing.T, name string, expected []code.Instructions, actual code.Instructions) error {
 	t.Helper()
 	concatted := concatInstructions(expected)
 
 	if len(actual) != len(concatted) {
-		return fmt.Errorf("wrong instructions length.\nwant=%q\ngot =%q",
-			concatted, actual)
+		return fmt.Errorf("'%s' wrong instructions length.\nwant=%q\ngot =%q",
+			name, concatted, actual)
 	}
 	for i, ins := range concatted {
 		if actual[i] != ins {
-			return fmt.Errorf("wrong instruction at %d.\nwant=%q\ngot =%q",
-				i, concatted, actual)
+			return fmt.Errorf("'%s' wrong instruction at %d.\nwant=%q\ngot =%q",
+				name, i, concatted, actual)
 		}
 	}
 	return nil
@@ -125,11 +125,12 @@ func concatInstructions(s []code.Instructions) code.Instructions {
 
 func testConstants(
 	t *testing.T,
+	name string,
 	expected []interface{},
 	actual []object.Object,
 ) error {
 	if len(expected) != len(actual) {
-		return fmt.Errorf("wrong number of constants. got=%d, want=%d",
+		return fmt.Errorf("'%s' wrong number of constants. got=%d, want=%d", name,
 			len(actual), len(expected))
 	}
 	for i, constant := range expected {
@@ -137,7 +138,7 @@ func testConstants(
 		case int:
 			err := testIntegerObject(int64(constant), actual[i])
 			if err != nil {
-				return fmt.Errorf("constant %d - testIntegerObject failed: %s",
+				return fmt.Errorf("'%s' constant %d - testIntegerObject failed: %s", name,
 					i, err)
 			}
 		}
@@ -268,6 +269,30 @@ if (true) { 10 }; 3333;
 				// 0008
 				code.Make(code.OpConstant, 1),
 				// 0011
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: `
+if (true) { 10 } else { 20 }; 3333;
+`,
+			expectedConstants: []interface{}{10, 20, 3333},
+			expectedInstructions: []code.Instructions{
+				// 0000
+				code.Make(code.OpTrue),
+				// 0001
+				code.Make(code.OpJumpNotTruthy, 10),
+				// 0004
+				code.Make(code.OpConstant, 0),
+				// 0007
+				code.Make(code.OpJump, 13),
+				// 0010
+				code.Make(code.OpConstant, 1),
+				// 0013
+				code.Make(code.OpPop),
+				// 0014
+				code.Make(code.OpConstant, 2),
+				// 0017
 				code.Make(code.OpPop),
 			},
 		},
