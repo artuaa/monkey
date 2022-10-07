@@ -105,9 +105,9 @@
  - [X] Booleans
  - [X] Comparison Operators
  - [X] Prefix Expressions
-** 4 Conditionals [/]
- - [ ] Jumps
- - [ ] Compiling Conditionals
+** 4 Conditionals [2/4]
+ - [X] Jumps
+ - [X] Compiling Conditionals
  - [ ] Executing Jumps
  - [ ] Welcome Back, Null!
 ** 5 Keeping Track of Names [/]

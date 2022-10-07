@@ -76,9 +76,32 @@ func (vm *VM) Run() error {
 			if err != nil {
 				return err
 			}
+		case code.OpJump:
+			pos := int(binary.BigEndian.Uint16(vm.instructions[ip+1:]))
+			ip = pos - 1
+		case code.OpJumpNotTruthy:
+			pos := int(binary.BigEndian.Uint16(vm.instructions[ip+1:]))
+			ip += 2
+
+			condition := vm.pop()
+
+			if !isTruthy(condition) {
+				ip = pos - 1
+			}
 		}
 	}
 	return nil
+}
+
+func isTruthy(condition object.Object) bool {
+	switch condition {
+	case True:
+		return true
+	case False:
+		return false
+	default:
+		return true
+	}
 }
 
 func (vm *VM) executeMinusOperator() error {
