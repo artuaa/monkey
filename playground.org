@@ -1,0 +1,16 @@
+#+title: Playground
+* Repl
+Start repl
+#+begin_src tmux
+cd ~/monkey_interpreter
+go run main.go
+#+end_src
+
+* Keeping Track of Names
+#+begin_src tmux
+let a = 0; a + 2
+let a = 1;
+let b = 2;
+let c = a + b;
+#+end_src
+

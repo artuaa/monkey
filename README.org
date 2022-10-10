@@ -1,4 +1,6 @@
 #+title: Writing An X In Go
+#+startup: show2levels
+
 * Writing An Interpreter In Go
 ** 1 Lexing [5/5]
 - [X] 1.1 - Lexical Analysis
@@ -17,7 +19,7 @@
 - [X] Top Down Operator Precedence (or: Pratt Parsing)
 - [X] Terminology
 - [X] Preparing the AST
-- [X] IIdentifiers
+- [X] Identifiers
 - [X] Integer Literals
 - [X] Prefix Operators
 - [X] Infix Operators
@@ -105,17 +107,20 @@
  - [X] Booleans
  - [X] Comparison Operators
  - [X] Prefix Expressions
-** 4 Conditionals [2/4]
+** 4 Conditionals [4/4]
  - [X] Jumps
  - [X] Compiling Conditionals
- - [ ] Executing Jumps
- - [ ] Welcome Back, Null!
-** 5 Keeping Track of Names [/]
- - [ ] The Plan
- - [ ] Compiling Bindings
- - [ ] Introducing: the Symbol Table
- - [ ] Using Symbols in the Compiler
- - [ ] Adding Globals to the VM
+ - [X] Executing Jumps
+ - [X] Welcome Back, Null!
+** 5 Keeping Track of Names [5/5]
+:LOGBOOK:
+CLOCK: [2022-10-10 Mon 10:25]--[2022-10-10 Mon 11:21] =>  0:56
+:END:
+ - [X] The Plan
+ - [X] Compiling Bindings
+ - [X] Introducing: the Symbol Table
+ - [X] Using Symbols in the Compiler
+ - [X] Adding Globals to the VM
 ** 6 String, Array and Hash [/]
  - [ ] String
  - [ ] Array
