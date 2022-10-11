@@ -116,13 +116,30 @@ func (vm *VM) Run() error {
 			}
 		case code.OpArray:
 			length := int(binary.BigEndian.Uint16(vm.instructions[ip+1:]))
-			ip +=2
+			ip += 2
 			elements := make([]object.Object, length)
-			for i:= 0; i < length; i++{
-				elements[length - i - 1] = vm.pop()
+			for i := 0; i < length; i++ {
+				elements[length-i-1] = vm.pop()
 			}
-            err := vm.push(&object.Array{Elements: elements})
-			if err != nil{
+			err := vm.push(&object.Array{Elements: elements})
+			if err != nil {
+				return err
+			}
+		case code.OpHash:
+			length := int(binary.BigEndian.Uint16(vm.instructions[ip+1:]))
+			ip += 2
+			pairs := make(map[object.HashKey]object.HashPair)
+			for i := 0; i < length; i+=2 {
+				value := vm.pop()
+				key := vm.pop()
+				hashkey, ok := key.(object.Hashable)
+				if !ok {
+					return fmt.Errorf("unusebale as hashkey: %s", key.Type())
+				}
+				pairs[hashkey.HashKey()] = object.HashPair{Key: key, Value: value}
+			}
+			err := vm.push(&object.Hash{Pairs: pairs})
+			if err != nil {
 				return err
 			}
 		}
