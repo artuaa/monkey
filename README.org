@@ -122,6 +122,9 @@ CLOCK: [2022-10-10 Mon 10:25]--[2022-10-10 Mon 11:21] =>  0:56
  - [X] Using Symbols in the Compiler
  - [X] Adding Globals to the VM
 ** 6 String, Array and Hash [/]
+:LOGBOOK:
+CLOCK: [2022-10-11 Tue 07:43]
+:END:
  - [ ] String
  - [ ] Array
  - [ ] Hash

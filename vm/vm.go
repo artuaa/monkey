@@ -165,6 +165,9 @@ func (vm *VM) executeBinaryOperation(op code.Opcode) error {
 	if left.Type() == object.BOOLEAN_OBJ && right.Type() == object.BOOLEAN_OBJ {
 		return vm.executeBinaryBooleanOperation(left, right, op)
 	}
+	if left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ {
+		return vm.executeBinaryStringOperation(left, right, op)
+	}
 	return fmt.Errorf("unsupported types for binary operation: %s %s", left.Type(), right.Type())
 }
 
@@ -190,6 +193,7 @@ func (vm *VM) executeBinaryIntegerOperation(left, right object.Object, op code.O
 		return fmt.Errorf("unknown integer operator: %d", op)
 	}
 }
+
 func (vm *VM) executeBinaryBooleanOperation(left, right object.Object, op code.Opcode) error {
 	lv := left.(*object.Boolean).Value
 	rv := right.(*object.Boolean).Value
@@ -199,7 +203,18 @@ func (vm *VM) executeBinaryBooleanOperation(left, right object.Object, op code.O
 	case code.OpNotEqual:
 		return vm.push(nativeBoolToBooleanObject(lv != rv))
 	default:
-		return fmt.Errorf("unknown integer operator: %d", op)
+		return fmt.Errorf("unknown boolean operator: %d", op)
+	}
+}
+
+func (vm *VM) executeBinaryStringOperation(left, right object.Object, op code.Opcode) error {
+	lv := left.(*object.String).Value
+	rv := right.(*object.String).Value
+	switch op {
+	case code.OpAdd:
+		return vm.push(&object.String{Value: lv + rv})
+	default:
+		return fmt.Errorf("unknown string operator: %d", op)
 	}
 }
 
