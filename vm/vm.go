@@ -114,6 +114,17 @@ func (vm *VM) Run() error {
 			if err != nil {
 				return err
 			}
+		case code.OpArray:
+			length := int(binary.BigEndian.Uint16(vm.instructions[ip+1:]))
+			ip +=2
+			elements := make([]object.Object, length)
+			for i:= 0; i < length; i++{
+				elements[length - i - 1] = vm.pop()
+			}
+            err := vm.push(&object.Array{Elements: elements})
+			if err != nil{
+				return err
+			}
 		}
 	}
 	return nil

@@ -121,12 +121,13 @@ CLOCK: [2022-10-10 Mon 10:25]--[2022-10-10 Mon 11:21] =>  0:56
  - [X] Introducing: the Symbol Table
  - [X] Using Symbols in the Compiler
  - [X] Adding Globals to the VM
-** 6 String, Array and Hash [/]
+** 6 String, Array and Hash [2/4]
 :LOGBOOK:
-CLOCK: [2022-10-11 Tue 07:43]
+CLOCK: [2022-10-11 Tue 08:09]
+CLOCK: [2022-10-11 Tue 07:43]--[2022-10-11 Tue 08:08] =>  0:25
 :END:
- - [ ] String
- - [ ] Array
+ - [X] String
+ - [X] Array
  - [ ] Hash
  - [ ] Adding the index operator
 ** 7 Functions [/]
