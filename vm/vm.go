@@ -129,7 +129,7 @@ func (vm *VM) Run() error {
 			length := int(binary.BigEndian.Uint16(vm.instructions[ip+1:]))
 			ip += 2
 			pairs := make(map[object.HashKey]object.HashPair)
-			for i := 0; i < length; i+=2 {
+			for i := 0; i < length; i += 2 {
 				value := vm.pop()
 				key := vm.pop()
 				hashkey, ok := key.(object.Hashable)
@@ -141,6 +141,35 @@ func (vm *VM) Run() error {
 			err := vm.push(&object.Hash{Pairs: pairs})
 			if err != nil {
 				return err
+			}
+		case code.OpIndex:
+			indexObj := vm.pop()
+			left := vm.pop()
+			switch left := left.(type) {
+			case *object.Array:
+				index, ok := indexObj.(*object.Integer)
+				if !ok {
+					return fmt.Errorf("index must be integer: %s", indexObj.Type())
+				}
+				idx := int(index.Value)
+				if idx >= 0 && idx < len(left.Elements) {
+					vm.push(left.Elements[index.Value])
+				} else {
+					vm.push(Null)
+				}
+			case *object.Hash:
+				key, ok := indexObj.(object.Hashable)
+				if !ok {
+					return fmt.Errorf("unusebale as hashkey: %s", indexObj.Type())
+				}
+				pair, ok := left.Pairs[key.HashKey()]
+				if ok {
+					vm.push(pair.Value)
+				} else {
+					vm.push(Null)
+				}
+			default:
+				return fmt.Errorf("index operator not supported %s", left.Type())
 			}
 		}
 	}

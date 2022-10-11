@@ -14,3 +14,8 @@ let b = 2;
 let c = a + b;
 #+end_src
 
+* Indexes
+#+begin_src tmux
+[1, 2, 3][1]
+{"one": 1, "two": 2, "three": 3}["o" + "ne"]
+#+end_src
