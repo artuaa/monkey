@@ -10,26 +10,47 @@ import (
 
 const StackSize = 2048
 const GlobalsSize = 65536
+const MaxFrames = 1024
 
 var True = &object.Boolean{Value: true}
 var False = &object.Boolean{Value: false}
 var Null = &object.Null{}
 
 type VM struct {
-	constants    []object.Object
-	instructions code.Instructions
-	stack        []object.Object
-	sp           int // points on the next value. Top of the stack is stack[sp-1]
-	globals      []object.Object
+	constants   []object.Object
+	stack       []object.Object
+	sp          int // points on the next value. Top of the stack is stack[sp-1]
+	globals     []object.Object
+	frames      []*Frame
+	framesIndex int
+}
+
+func (vm *VM) currentFrame() *Frame {
+	return vm.frames[vm.framesIndex-1]
+}
+
+func (vm *VM) pushFrame(f *Frame) {
+	vm.frames[vm.framesIndex] = f
+	vm.framesIndex++
+}
+
+func (vm *VM) popFrame() *Frame {
+	vm.framesIndex--
+	return vm.frames[vm.framesIndex]
 }
 
 func New(bytecode *compiler.Bytecode) *VM {
+	frames := make([]*Frame, MaxFrames)
+	mainFn := &object.CompiledFunction{Instructions: bytecode.Instructions}
+	mainFrame := NewFrame(mainFn)
+	frames[0] = mainFrame
 	return &VM{
-		instructions: bytecode.Instructions,
-		constants:    bytecode.Constants,
-		stack:        make([]object.Object, StackSize),
-		sp:           0,
-		globals:      make([]object.Object, GlobalsSize),
+		constants:   bytecode.Constants,
+		stack:       make([]object.Object, StackSize),
+		sp:          0,
+		globals:     make([]object.Object, GlobalsSize),
+		frames:      frames,
+		framesIndex: 1,
 	}
 }
 
@@ -40,12 +61,16 @@ func NewWithGlobalsStore(bytecode *compiler.Bytecode, s []object.Object) *VM {
 }
 
 func (vm *VM) Run() error {
-	for ip := 0; ip < len(vm.instructions); ip++ {
-		op := code.Opcode(vm.instructions[ip])
+	var ins code.Instructions
+	var op code.Opcode
+	for vm.currentFrame().ip < len(vm.currentFrame().Instructions())-1 {
+		vm.currentFrame().ip++
+		ins = vm.currentFrame().Instructions()
+		op = code.Opcode(ins[vm.currentFrame().ip])
 		switch op {
 		case code.OpConstant:
-			constIdx := binary.BigEndian.Uint16(vm.instructions[ip+1:])
-			ip += 2
+			constIdx := binary.BigEndian.Uint16(ins[vm.currentFrame().ip+1:])
+			vm.currentFrame().ip += 2
 			err := vm.push(vm.constants[constIdx])
 			if err != nil {
 				return err
@@ -92,31 +117,31 @@ func (vm *VM) Run() error {
 				return err
 			}
 		case code.OpJump:
-			pos := int(binary.BigEndian.Uint16(vm.instructions[ip+1:]))
-			ip = pos - 1
+			pos := int(binary.BigEndian.Uint16(ins[vm.currentFrame().ip+1:]))
+			vm.currentFrame().ip = pos - 1
 		case code.OpJumpNotTruthy:
-			pos := int(binary.BigEndian.Uint16(vm.instructions[ip+1:]))
-			ip += 2
+			pos := int(binary.BigEndian.Uint16(ins[vm.currentFrame().ip+1:]))
+			vm.currentFrame().ip += 2
 
 			condition := vm.pop()
 
 			if !isTruthy(condition) {
-				ip = pos - 1
+				vm.currentFrame().ip = pos - 1
 			}
 		case code.OpSetGlobal:
-			index := binary.BigEndian.Uint16(vm.instructions[ip+1:])
-			ip += 2
+			index := binary.BigEndian.Uint16(ins[vm.currentFrame().ip+1:])
+			vm.currentFrame().ip += 2
 			vm.globals[index] = vm.pop()
 		case code.OpGetGlobal:
-			index := binary.BigEndian.Uint16(vm.instructions[ip+1:])
-			ip += 2
+			index := binary.BigEndian.Uint16(ins[vm.currentFrame().ip+1:])
+			vm.currentFrame().ip += 2
 			err := vm.push(vm.globals[index])
 			if err != nil {
 				return err
 			}
 		case code.OpArray:
-			length := int(binary.BigEndian.Uint16(vm.instructions[ip+1:]))
-			ip += 2
+			length := int(binary.BigEndian.Uint16(ins[vm.currentFrame().ip+1:]))
+			vm.currentFrame().ip += 2
 			elements := make([]object.Object, length)
 			for i := 0; i < length; i++ {
 				elements[length-i-1] = vm.pop()
@@ -126,8 +151,8 @@ func (vm *VM) Run() error {
 				return err
 			}
 		case code.OpHash:
-			length := int(binary.BigEndian.Uint16(vm.instructions[ip+1:]))
-			ip += 2
+			length := int(binary.BigEndian.Uint16(ins[vm.currentFrame().ip+1:]))
+			vm.currentFrame().ip += 2
 			pairs := make(map[object.HashKey]object.HashPair)
 			for i := 0; i < length; i += 2 {
 				value := vm.pop()
