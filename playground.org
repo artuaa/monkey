@@ -19,3 +19,9 @@ let c = a + b;
 [1, 2, 3][1]
 {"one": 1, "two": 2, "three": 3}["o" + "ne"]
 #+end_src
+* Functions
+#+begin_src tmux
+let returnsOne = fn() { 1; };
+let returnsOneReturner = fn() { returnsOne; };
+returnsOneReturner()();
+#+end_src
