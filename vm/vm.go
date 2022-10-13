@@ -196,6 +196,30 @@ func (vm *VM) Run() error {
 			default:
 				return fmt.Errorf("index operator not supported %s", left.Type())
 			}
+		case code.OpCall:
+			fn, ok := vm.stack[vm.sp -1].(*object.CompiledFunction)
+			if !ok {
+				return fmt.Errorf("calling non-function")
+			}
+			frame := NewFrame(fn)
+			vm.pushFrame(frame)
+        case code.OpReturnValue:
+			value := vm.pop()
+			vm.popFrame()
+			vm.pop()
+
+			err := vm.push(value)
+			if err != nil {
+				return err
+			}
+        case code.OpReturn:
+			vm.popFrame()
+			vm.pop()
+
+			err := vm.push(Null)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
