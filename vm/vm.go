@@ -42,7 +42,7 @@ func (vm *VM) popFrame() *Frame {
 func New(bytecode *compiler.Bytecode) *VM {
 	frames := make([]*Frame, MaxFrames)
 	mainFn := &object.CompiledFunction{Instructions: bytecode.Instructions}
-	mainFrame := NewFrame(mainFn)
+	mainFrame := NewFrame(mainFn, 0)
 	frames[0] = mainFrame
 	return &VM{
 		constants:   bytecode.Constants,
@@ -197,26 +197,40 @@ func (vm *VM) Run() error {
 				return fmt.Errorf("index operator not supported %s", left.Type())
 			}
 		case code.OpCall:
-			fn, ok := vm.stack[vm.sp -1].(*object.CompiledFunction)
+			fn, ok := vm.stack[vm.sp-1].(*object.CompiledFunction)
 			if !ok {
 				return fmt.Errorf("calling non-function")
 			}
-			frame := NewFrame(fn)
+			frame := NewFrame(fn, vm.sp)
 			vm.pushFrame(frame)
-        case code.OpReturnValue:
+			vm.sp = frame.basePointer + fn.NumLocals
+		case code.OpReturnValue:
 			value := vm.pop()
-			vm.popFrame()
-			vm.pop()
+			frame := vm.popFrame()
+			vm.sp = frame.basePointer - 1
 
 			err := vm.push(value)
 			if err != nil {
 				return err
 			}
-        case code.OpReturn:
-			vm.popFrame()
-			vm.pop()
+		case code.OpReturn:
+			frame := vm.popFrame()
+			vm.sp = frame.basePointer - 1
 
 			err := vm.push(Null)
+			if err != nil {
+				return err
+			}
+		case code.OpSetLocal:
+			localIndex := binary.BigEndian.Uint16(ins[vm.currentFrame().ip+1:])
+			vm.currentFrame().ip += 2
+			frame := vm.currentFrame()
+			vm.stack[frame.basePointer+int(localIndex)] = vm.pop()
+		case code.OpGetLocal:
+			localIndex := binary.BigEndian.Uint16(ins[vm.currentFrame().ip+1:])
+			vm.currentFrame().ip += 2
+			frame := vm.currentFrame()
+			err := vm.push(vm.stack[frame.basePointer+int(localIndex)])
 			if err != nil {
 				return err
 			}

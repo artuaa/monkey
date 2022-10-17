@@ -222,7 +222,7 @@ func (s *String) HashKey() HashKey {
 
 type CompiledFunction struct {
 	Instructions   code.Instructions
-	Value string
+	NumLocals int
 }
 
 func (cf *CompiledFunction) Type() ObjectType { return COMPILED_FUNCTION }
