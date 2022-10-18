@@ -131,8 +131,10 @@ CLOCK: [2022-10-11 Tue 07:43]--[2022-10-11 Tue 08:08] =>  0:25
  - [X] Array
  - [X] Hash
  - [X] Adding the index operator
-** 7 Functions [10/15]
+** 7 Functions [15/15]
 :LOGBOOK:
+CLOCK: [2022-10-18 Tue 09:00]--[2022-10-18 Tue 09:25] =>  0:25
+CLOCK: [2022-10-18 Tue 08:31]--[2022-10-18 Tue 08:56] =>  0:25
 CLOCK: [2022-10-17 Mon 12:21]--[2022-10-17 Mon 12:46] =>  0:25
 CLOCK: [2022-10-17 Mon 11:37]--[2022-10-17 Mon 12:02] =>  0:25
 CLOCK: [2022-10-17 Mon 11:01]--[2022-10-17 Mon 11:26] =>  0:25
@@ -156,11 +158,11 @@ CLOCK: [2022-10-12 Wed 08:15]--[2022-10-12 Wed 08:40] =>  0:25
  - [X] Local Bindings
  - [X] Opcodes for Local Bindings
  - [X] Compiling Locals
- - [ ] Implementing Local Bindings in the VM
- - [ ] Arguments
- - [ ] Compiling Calls With Arguments
- - [ ] Resolving References to Arguments
- - [ ] Arguments in the VM
+ - [X] Implementing Local Bindings in the VM
+ - [X] Arguments
+ - [X] Compiling Calls With Arguments
+ - [X] Resolving References to Arguments
+ - [X] Arguments in the VM
 ** 8 Built-in Functions [/]
  - [ ] Making the Change Easy
  - [ ] Making the Change: the Plan

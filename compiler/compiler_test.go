@@ -370,44 +370,6 @@ two;
 	runCompilerTests(t, tests)
 }
 
-func TestDefine(t *testing.T) {
-	expected := map[string]Symbol{
-		"a": {Name: "a", Scope: GlobalScope, Index: 0},
-		"b": {Name: "b", Scope: GlobalScope, Index: 1},
-		"c": {Name: "c", Scope: LocalScope, Index: 0},
-		"d": {Name: "d", Scope: LocalScope, Index: 1},
-		"e": {Name: "e", Scope: LocalScope, Index: 0},
-		"f": {Name: "f", Scope: LocalScope, Index: 1},
-	}
-	global := NewSymbolTable()
-	a := global.Define("a")
-	if a != expected["a"] {
-		t.Errorf("expected a=%+v, got=%+v", expected["a"], a)
-	}
-	b := global.Define("b")
-	if b != expected["b"] {
-		t.Errorf("expected b=%+v, got=%+v", expected["b"], b)
-	}
-	firstLocal := NewEnclosedSymbolTable(global)
-	c := firstLocal.Define("c")
-	if c != expected["c"] {
-		t.Errorf("expected c=%+v, got=%+v", expected["c"], c)
-	}
-	d := firstLocal.Define("d")
-	if d != expected["d"] {
-		t.Errorf("expected d=%+v, got=%+v", expected["d"], d)
-	}
-	secondLocal := NewEnclosedSymbolTable(firstLocal)
-	e := secondLocal.Define("e")
-	if e != expected["e"] {
-		t.Errorf("expected e=%+v, got=%+v", expected["e"], e)
-	}
-	f := secondLocal.Define("f")
-	if f != expected["f"] {
-		t.Errorf("expected f=%+v, got=%+v", expected["f"], f)
-	}
-}
-
 func TestResolveGlobal(t *testing.T) {
 	global := NewSymbolTable()
 	global.Define("a")
@@ -727,7 +689,7 @@ func TestFunctionCalls(t *testing.T) {
 			},
 			expectedInstructions: []code.Instructions{
 				code.Make(code.OpConstant, 1), // The compiled function
-				code.Make(code.OpCall),
+				code.Make(code.OpCall, 0),
 				code.Make(code.OpPop),
 			},
 		},
@@ -747,7 +709,101 @@ noArg();
 				code.Make(code.OpConstant, 1), // The compiled function
 				code.Make(code.OpSetGlobal, 0),
 				code.Make(code.OpGetGlobal, 0),
-				code.Make(code.OpCall),
+				code.Make(code.OpCall, 0),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: `
+let oneArg = fn(a) { };
+oneArg(24);
+`,
+			expectedConstants: []interface{}{
+				[]code.Instructions{
+					code.Make(code.OpReturn),
+				},
+				24,
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpCall, 1),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: `
+let manyArg = fn(a, b, c) { };
+manyArg(24, 25, 26);
+`,
+			expectedConstants: []interface{}{
+				[]code.Instructions{
+					code.Make(code.OpReturn),
+				},
+				24,
+				25,
+				26,
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpConstant, 2),
+				code.Make(code.OpConstant, 3),
+				code.Make(code.OpCall, 3),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: `
+let oneArg = fn(a) { a };
+oneArg(24);
+`,
+			expectedConstants: []interface{}{
+				[]code.Instructions{
+					code.Make(code.OpGetLocal, 0),
+					code.Make(code.OpReturnValue),
+				},
+				24,
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpCall, 1),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: `
+let manyArg = fn(a, b, c) { a; b; c };
+manyArg(24, 25, 26);
+`,
+			expectedConstants: []interface{}{
+				[]code.Instructions{
+					code.Make(code.OpGetLocal, 0),
+					code.Make(code.OpPop),
+					code.Make(code.OpGetLocal, 1),
+					code.Make(code.OpPop),
+					code.Make(code.OpGetLocal, 2),
+					code.Make(code.OpReturnValue),
+				},
+				24,
+				25,
+				26,
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpGetGlobal, 0),
+				code.Make(code.OpConstant, 1),
+				code.Make(code.OpConstant, 2),
+				code.Make(code.OpConstant, 3),
+				code.Make(code.OpCall, 3),
 				code.Make(code.OpPop),
 			},
 		},

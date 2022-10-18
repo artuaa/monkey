@@ -5,7 +5,6 @@ Start repl
 cd ~/monkey_interpreter
 go run main.go
 #+end_src
-
 * Keeping Track of Names
 #+begin_src tmux
 let a = 0; a + 2
@@ -13,7 +12,6 @@ let a = 1;
 let b = 2;
 let c = a + b;
 #+end_src
-
 * Indexes
 #+begin_src tmux
 [1, 2, 3][1]
@@ -24,4 +22,11 @@ let c = a + b;
 let returnsOne = fn() { 1; };
 let returnsOneReturner = fn() { returnsOne; };
 returnsOneReturner()();
+#+end_src
+With parameters
+#+begin_src tmux
+let one = fn() { 1; };
+let two = fn() { let result = one(); return result + result; };
+let three = fn(two) { two() + 1; };
+three(two);
 #+end_src

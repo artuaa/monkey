@@ -1,7 +1,6 @@
 package vm
 
 import (
-	"encoding/binary"
 	"fmt"
 	"interpreter/code"
 	"interpreter/compiler"
@@ -69,7 +68,7 @@ func (vm *VM) Run() error {
 		op = code.Opcode(ins[vm.currentFrame().ip])
 		switch op {
 		case code.OpConstant:
-			constIdx := binary.BigEndian.Uint16(ins[vm.currentFrame().ip+1:])
+			constIdx := code.ReadUint16(ins[vm.currentFrame().ip+1:])
 			vm.currentFrame().ip += 2
 			err := vm.push(vm.constants[constIdx])
 			if err != nil {
@@ -117,10 +116,10 @@ func (vm *VM) Run() error {
 				return err
 			}
 		case code.OpJump:
-			pos := int(binary.BigEndian.Uint16(ins[vm.currentFrame().ip+1:]))
+			pos := code.ReadUint16(ins[vm.currentFrame().ip+1:])
 			vm.currentFrame().ip = pos - 1
 		case code.OpJumpNotTruthy:
-			pos := int(binary.BigEndian.Uint16(ins[vm.currentFrame().ip+1:]))
+			pos := code.ReadUint16(ins[vm.currentFrame().ip+1:])
 			vm.currentFrame().ip += 2
 
 			condition := vm.pop()
@@ -129,18 +128,18 @@ func (vm *VM) Run() error {
 				vm.currentFrame().ip = pos - 1
 			}
 		case code.OpSetGlobal:
-			index := binary.BigEndian.Uint16(ins[vm.currentFrame().ip+1:])
+			index := code.ReadUint16(ins[vm.currentFrame().ip+1:])
 			vm.currentFrame().ip += 2
 			vm.globals[index] = vm.pop()
 		case code.OpGetGlobal:
-			index := binary.BigEndian.Uint16(ins[vm.currentFrame().ip+1:])
+			index := code.ReadUint16(ins[vm.currentFrame().ip+1:])
 			vm.currentFrame().ip += 2
 			err := vm.push(vm.globals[index])
 			if err != nil {
 				return err
 			}
 		case code.OpArray:
-			length := int(binary.BigEndian.Uint16(ins[vm.currentFrame().ip+1:]))
+			length := code.ReadUint16(ins[vm.currentFrame().ip+1:])
 			vm.currentFrame().ip += 2
 			elements := make([]object.Object, length)
 			for i := 0; i < length; i++ {
@@ -151,7 +150,7 @@ func (vm *VM) Run() error {
 				return err
 			}
 		case code.OpHash:
-			length := int(binary.BigEndian.Uint16(ins[vm.currentFrame().ip+1:]))
+			length := code.ReadUint16(ins[vm.currentFrame().ip+1:])
 			vm.currentFrame().ip += 2
 			pairs := make(map[object.HashKey]object.HashPair)
 			for i := 0; i < length; i += 2 {
@@ -197,11 +196,16 @@ func (vm *VM) Run() error {
 				return fmt.Errorf("index operator not supported %s", left.Type())
 			}
 		case code.OpCall:
-			fn, ok := vm.stack[vm.sp-1].(*object.CompiledFunction)
+			numArgs := code.ReadUint16(ins[vm.currentFrame().ip+1:])
+			vm.currentFrame().ip += 2
+			fn, ok := vm.stack[vm.sp-1-numArgs].(*object.CompiledFunction)
 			if !ok {
 				return fmt.Errorf("calling non-function")
 			}
-			frame := NewFrame(fn, vm.sp)
+			if numArgs != fn.NumParameters{
+				return fmt.Errorf("wrong number of arguments: want=%d, got=%d", fn.NumParameters, numArgs)
+			}
+			frame := NewFrame(fn, vm.sp-numArgs)
 			vm.pushFrame(frame)
 			vm.sp = frame.basePointer + fn.NumLocals
 		case code.OpReturnValue:
@@ -222,15 +226,15 @@ func (vm *VM) Run() error {
 				return err
 			}
 		case code.OpSetLocal:
-			localIndex := binary.BigEndian.Uint16(ins[vm.currentFrame().ip+1:])
+			localIndex := code.ReadUint16(ins[vm.currentFrame().ip+1:])
 			vm.currentFrame().ip += 2
 			frame := vm.currentFrame()
-			vm.stack[frame.basePointer+int(localIndex)] = vm.pop()
+			vm.stack[frame.basePointer+localIndex] = vm.pop()
 		case code.OpGetLocal:
-			localIndex := binary.BigEndian.Uint16(ins[vm.currentFrame().ip+1:])
+			localIndex := code.ReadUint16(ins[vm.currentFrame().ip+1:])
 			vm.currentFrame().ip += 2
 			frame := vm.currentFrame()
-			err := vm.push(vm.stack[frame.basePointer+int(localIndex)])
+			err := vm.push(vm.stack[frame.basePointer+localIndex])
 			if err != nil {
 				return err
 			}
