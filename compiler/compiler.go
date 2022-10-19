@@ -40,10 +40,14 @@ func New() *Compiler {
 		lastInstruction:     EmittedInstruction{},
 		previousInstruction: EmittedInstruction{},
 	}
+	symbolTable := NewSymbolTable()
+	for i, fn := range object.Builtins {
+		symbolTable.DefineBuiltin(i, fn.Name)
+	}
 	return &Compiler{
 		instructions: code.Instructions{},
 		constants:    []object.Object{},
-		symbolTable:  NewSymbolTable(),
+		symbolTable:  symbolTable,
 		scopes:       []CompilationScope{mainScope},
 		scopeIndex:   0,
 	}
@@ -197,10 +201,15 @@ func (c *Compiler) Compile(node ast.Node) error {
 		if !ok {
 			return fmt.Errorf("undefined variable %s", node.Value)
 		}
-		if symbol.Scope == GlobalScope {
+		switch symbol.Scope {
+		case GlobalScope:
 			c.emit(code.OpGetGlobal, symbol.Index)
-		} else {
+		case LocalScope:
 			c.emit(code.OpGetLocal, symbol.Index)
+		case BuiltinScope:
+			c.emit(code.OpGetBuiltin, symbol.Index)
+		default:
+			return fmt.Errorf("unexpected symbol scope: %s", symbol.Scope)
 		}
 	case *ast.StringLiteral:
 		str := &object.String{Value: node.Value}
@@ -244,7 +253,7 @@ func (c *Compiler) Compile(node ast.Node) error {
 		c.emit(code.OpIndex)
 	case *ast.FunctionLiteral:
 		c.enterScope()
-		for _, param := range node.Parameters{
+		for _, param := range node.Parameters {
 			c.symbolTable.Define(param.Value)
 		}
 		err := c.Compile(node.Body)
@@ -261,8 +270,8 @@ func (c *Compiler) Compile(node ast.Node) error {
 		numLocals := c.symbolTable.numDefinitions
 		instructions := c.leaveScope()
 		compiledFn := &object.CompiledFunction{
-			Instructions: instructions,
-			NumLocals:    numLocals,
+			Instructions:  instructions,
+			NumLocals:     numLocals,
 			NumParameters: len(node.Parameters),
 		}
 		c.emit(code.OpConstant, c.addConstant(compiledFn))

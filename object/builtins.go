@@ -39,23 +39,6 @@ var Builtins = []struct {
 	},
 	},
 	{
-		"len",
-		&Builtin{
-			Fn: func(args ...Object) Object {
-				if l := len(args); l != 1 {
-					return newError("wrong number of arguments. got=%d, want=%d", l, 1)
-				}
-				switch arg := args[0].(type) {
-				case *String:
-					return &Integer{Value: int64(len(arg.Value))}
-				case *Array:
-					return &Integer{Value: int64(len(arg.Elements))}
-				}
-				return newError("argument to `len` not supported, got %s", args[0].Type())
-			},
-		},
-	},
-	{
 		"first",
 		&Builtin{
 			Fn: func(args ...Object) Object {

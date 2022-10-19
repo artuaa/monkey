@@ -33,6 +33,7 @@ const (
 	OpCall
 	OpReturnValue
 	OpReturn
+	OpGetBuiltin
 )
 
 type Instructions []byte
@@ -71,6 +72,7 @@ var definitions = map[Opcode]*Definition{
 	OpReturn:        {"OpReturn", []int{}},
 	OpGetLocal:      {"OpGetLocal", []int{2}},
 	OpSetLocal:      {"OpSetLocal", []int{2}},
+	OpGetBuiltin:    {"OpGetBuiltin", []int{2}},
 }
 
 func Lookup(op byte) (*Definition, error) {
@@ -144,6 +146,6 @@ func ReadOperands(def *Definition, ins Instructions) ([]int, int) {
 	return result, offset
 }
 
-func ReadUint16(b []byte) int{
+func ReadUint16(b []byte) int {
 	return int(binary.BigEndian.Uint16(b))
 }
