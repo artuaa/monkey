@@ -163,13 +163,15 @@ CLOCK: [2022-10-12 Wed 08:15]--[2022-10-12 Wed 08:40] =>  0:25
  - [X] Arguments in the VM
 ** TODO 8 Built-in Functions [3/4]
 :LOGBOOK:
-CLOCK: [2022-10-19 Wed 09:53]
+CLOCK: [2022-10-19 Wed 10:52]
+CLOCK: [2022-10-19 Wed 10:22]--[2022-10-19 Wed 10:47] =>  0:25
+CLOCK: [2022-10-19 Wed 09:53]--[2022-10-19 Wed 10:18] =>  0:25
 :END:
  - [X] Making the Change Easy
  - [X] Making the Change: the Plan
  - [X] A New Scope for Built-in Functions
  - [ ] Executing built-in functions
-** TODO 9 Closures [/]
+** TODO 9 Closures [0/6]
  - [ ] The Problem
  - [ ] The Plan
  - [ ] Everything’s a closure

@@ -74,49 +74,59 @@ func testExpectedObject(
 	case string:
 		err := testStringObject(expected, actual)
 		if err != nil {
-			t.Errorf("testStringObject failed: %s", err)
+			t.Errorf("'%s', testStringObject failed: %s", name, err)
 		}
 	case *object.Null:
 		if actual != Null {
-			t.Errorf("object is not Null: %T %+v", actual, actual)
+			t.Errorf("'%s' object is not Null: %T %+v", name, actual, actual)
 		}
 	case []int:
 		array, ok := actual.(*object.Array)
 		if !ok {
-			t.Errorf("object not Array: %T (%+v)", actual, actual)
+			t.Errorf("'%s' object not Array: %T (%+v)", name, actual, actual)
 			return
 		}
 		if len(array.Elements) != len(expected) {
-			t.Errorf("wrong num of elements. want=%d, got=%d",
+			t.Errorf("'%s' wrong num of elements. want=%d, got=%d", name,
 				len(expected), len(array.Elements))
 			return
 		}
 		for i, expectedElem := range expected {
 			err := testIntegerObject(int64(expectedElem), array.Elements[i])
 			if err != nil {
-				t.Errorf("testIntegerObject failed: %s", err)
+				t.Errorf("'%s' testIntegerObject failed: %s", name, err)
 			}
 		}
 	case map[object.HashKey]int64:
 		hash, ok := actual.(*object.Hash)
 		if !ok {
-			t.Errorf("object is not Hash. got=%T (%+v)", actual, actual)
+			t.Errorf("'%s' object is not Hash. got=%T (%+v)", name, actual, actual)
 			return
 		}
 		if len(hash.Pairs) != len(expected) {
-			t.Errorf("hash has wrong number of Pairs. want=%d, got=%d",
+			t.Errorf("'%s' hash has wrong number of Pairs. want=%d, got=%d", name,
 				len(expected), len(hash.Pairs))
 			return
 		}
 		for expectedKey, expectedValue := range expected {
 			pair, ok := hash.Pairs[expectedKey]
 			if !ok {
-				t.Errorf("no pair for given key in Pairs")
+				t.Errorf("'%s' no pair for given key in Pairs", name)
 			}
 			err := testIntegerObject(expectedValue, pair.Value)
 			if err != nil {
-				t.Errorf("testIntegerObject failed: %s", err)
+				t.Errorf("'%s' testIntegerObject failed: %s", name, err)
 			}
+		}
+	case *object.Error:
+		errObj, ok := actual.(*object.Error)
+		if !ok {
+			t.Errorf("'%s' object is not Error: %T (%+v)", name, actual, actual)
+			return
+		}
+		if errObj.Message != expected.Message {
+			t.Errorf("'%s' wrong error message. expected=%q, got=%q", name,
+				expected.Message, errObj.Message)
 		}
 	}
 }
@@ -200,6 +210,7 @@ func TestBooleanExpressions(t *testing.T) {
 	}
 	runVmTests(t, tests)
 }
+
 func TestConditionals(t *testing.T) {
 	tests := []vmTestCase{
 		{"if (true) { 10 }", 10},
@@ -502,4 +513,50 @@ func TestCallingFunctionsWithWrongArguments(t *testing.T) {
 			t.Fatalf("wrong VM error: want=%q, got=%q", tt.expected, err)
 		}
 	}
+}
+
+func TestBuiltinFunctions(t *testing.T) {
+	tests := []vmTestCase{
+		{`len("")`, 0},
+		{`len("four")`, 4},
+		{`len("hello world")`, 11},
+		{
+			`len(1)`,
+			&object.Error{
+				Message: "argument to `len` not supported, got INTEGER",
+			},
+		},
+		{`len("one", "two")`,
+			&object.Error{
+				Message: "wrong number of arguments. got=2, want=1",
+			},
+		},
+		{`len([1, 2, 3])`, 3},
+		{`len([])`, 0},
+		{`puts("hello", "world!")`, Null},
+		{`first([1, 2, 3])`, 1},
+		{`first([])`, Null},
+		{`first(1)`,
+			&object.Error{
+				Message: "argument to `first` must be ARRAY, got INTEGER",
+			},
+		},
+		{`last([1, 2, 3])`, 3},
+		{`last([])`, Null},
+		{`last(1)`,
+			&object.Error{
+				Message: "argument to `last` must be ARRAY, got INTEGER",
+			},
+		},
+		{`rest([1, 2, 3])`, []int{2, 3}},
+		{`rest([])`, Null},
+		{`push([], 1)`, []int{1}},
+		{`push([], 1, 2, 3)`, []int{1,2,3}},
+		{`push(1, 1)`,
+			&object.Error{
+				Message: "argument to `push` must be ARRAY, got INTEGER",
+			},
+		},
+	}
+	runVmTests(t, tests)
 }

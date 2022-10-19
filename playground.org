@@ -30,3 +30,7 @@ let two = fn() { let result = one(); return result + result; };
 let three = fn(two) { two() + 1; };
 three(two);
 #+end_src
+Builtin's
+#+begin_src tmux
+push(rest(["piu", "hop", "hey"]), "la", "la", "ley")
+#+end_src

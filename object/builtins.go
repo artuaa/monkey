@@ -28,15 +28,15 @@ var Builtins = []struct {
 		},
 	},
 	{
-	"puts",
-	&Builtin{
-		Fn: func(args ...Object) Object {
-			for _, arg := range args {
-				fmt.Println(arg.Inspect())
-			}
-			return nil
+		"puts",
+		&Builtin{
+			Fn: func(args ...Object) Object {
+				for _, arg := range args {
+					fmt.Println(arg.Inspect())
+				}
+				return nil
+			},
 		},
-	},
 	},
 	{
 		"first",
@@ -52,7 +52,7 @@ var Builtins = []struct {
 					}
 					return nil
 				}
-				return newError("argument to `first` not supported, got %s", args[0].Type())
+				return newError("argument to `first` must be %s, got %s", ARRAY_OBJ, args[0].Type())
 			},
 		},
 	},
@@ -70,7 +70,7 @@ var Builtins = []struct {
 					}
 					return nil
 				}
-				return newError("argument to `last` not supported, got %s", args[0].Type())
+				return newError("argument to `last` must be %s, got %s", ARRAY_OBJ, args[0].Type())
 			},
 		},
 	},
@@ -88,7 +88,7 @@ var Builtins = []struct {
 						copy(elms, arg.Elements[1:])
 						return &Array{Elements: elms}
 					}
-					return &Array{Elements: []Object{}}
+					return nil
 				}
 				return newError("argument to `rest` not supported, got %s", args[0].Type())
 			},
@@ -98,18 +98,22 @@ var Builtins = []struct {
 		"push",
 		&Builtin{
 			Fn: func(args ...Object) Object {
-				if l := len(args); l != 2 {
-					return newError("wrong number of arguments. got=%d, want=%d", l, 2)
+				if l := len(args); l < 2 {
+					return newError("wrong number of arguments. got=%d, want > 1", l)
 				}
 				switch arg := args[0].(type) {
 				case *Array:
+					fnArgs := args[1:]
+					fnArgsLen := len(fnArgs)
 					length := len(arg.Elements)
-					newElements := make([]Object, length+1, length+1)
+					newElements := make([]Object, length+fnArgsLen, length+fnArgsLen)
 					copy(newElements, arg.Elements)
-					newElements[length] = args[1]
+					for i, a := range fnArgs {
+						newElements[length+i] = a
+					}
 					return &Array{Elements: newElements}
 				}
-				return newError("argument to `push` not supported, got %s", args[0].Type())
+				return newError("argument to `push` must be %s, got %s", ARRAY_OBJ, args[0].Type())
 			},
 		},
 	},
@@ -119,9 +123,9 @@ func newError(format string, a ...interface{}) *Error {
 	return &Error{Message: fmt.Sprintf(format, a...)}
 }
 
-func GetBuiltinByName(name string) *Builtin{
-	for _, def :=range Builtins {
-		if def.Name == name{
+func GetBuiltinByName(name string) *Builtin {
+	for _, def := range Builtins {
+		if def.Name == name {
 			return def.Builtin
 		}
 	}
