@@ -1,18 +1,16 @@
 #+title: Writing An X In Go
 #+startup: show2levels
 
-* Writing An Interpreter In Go
-** 1 Lexing [5/5]
+* PROJ Writing An Interpreter In Go [4/4]
+** DONE 1 Lexing [5/5]
 - [X] 1.1 - Lexical Analysis
 - [X] 1.2 - Defining Our Tokens
 - [X] 1.3 - The Lexer
 - [X] 1.4 - Extending our Token Set and Lexer
 - [X] 1.5 - Start of a REPL
-** 2 Parsing [23/23]
+** DONE 2 Parsing [23/23]
 - [X] 2.1 - Parsers
-- [X] 2.2 - Why not a parser generator?
-- [X] 2.3 - Writing a Parser for the Monkey Programming Language
-- [X] 2.4 - Parser’s first steps: parsing let statements
+- [X] 2.2 - Why not a parse.4 - Parser’s first steps: parsing let statements
 - [X] 2.5 - Parsing Return Statements
 - [X] 2.6 - Parsing Expressions
 - [X] Expressions in Monkey
@@ -32,7 +30,7 @@
 - [X] Call Expressions
 - [X] Removing TODOs
 - [X] 2.9 - Read-Parse-Print-Loop
-** 3 Evaluation [21/21]
+** DONE 3 Evaluation [21/21]
 - [X] 3.1 - Giving Meaning to Symbols
 - [X] 3.2 - Strategies of Evaluation
 - [X] 3.3 - A Tree-Walking Interpreter
@@ -54,7 +52,7 @@
 - [X] 3.9 - Bindings & The Environment
 - [X] 3.10 - Functions & Function Calls
 - [X] 3.11 - Who’s taking the trash out?
-** 4 Extending the Interpreter [23/23]
+** DONE 4 Extending the Interpreter [23/23]
 - [X] 4.1 - Data Types & Functions
 - [X] 4.2 - Strings
 - [X] Supporting Strings in our Lexer
@@ -78,13 +76,13 @@
 - [X] Evaluating Hash Literals
 - [X] Evaluating Index Expressions With Hashes
 - [X] 4.6 - The Grand Final
-* Writing An Compiler In Go
-** Introduction [4/4]
+* PROJ Writing An Compiler In Go [8/11]
+** DONE Introduction [4/4]
  - [X] Evolving Monkey
  - [X] The Past and Present
  - [X] The Future
  - [X] Use This Book
-** 1 Compilers & Virtual Machines [7/7]
+** DONE 1 Compilers & Virtual Machines [7/7]
  - [X] Compiles
  - [X] Virtual and Real Machines
  - [X] Real Machines
@@ -92,8 +90,8 @@
  - [X] Why Build One?
  - [X] Bytecode
  - [X] What We’re Going to Do, or: the Duality of VM and Compiler
-** 2 Hello Bytecode! [8/8]
- - [X] First Instructions
+** DONE 2 Hello Bytecode! [8/8]
+ - [X] First Instruction
  - [X] Starting With Bytes
  - [X] The Smallest Compiler
  - [X] Bytecode, Disassemble!
@@ -101,18 +99,18 @@
  - [X] Powering On the Machine
  - [X] Adding on the Stack
  - [X] Hooking up the REPL
-** 3 Compiling Expressions [5/5]
+** DONE 3 Compiling Expressions [5/5]
  - [X] Cleaning Up the Stack
  - [X] Infix Expressions
  - [X] Booleans
  - [X] Comparison Operators
  - [X] Prefix Expressions
-** 4 Conditionals [4/4]
+** DONE 4 Conditionals [4/4]
  - [X] Jumps
  - [X] Compiling Conditionals
  - [X] Executing Jumps
  - [X] Welcome Back, Null!
-** 5 Keeping Track of Names [5/5]
+** DONE 5 Keeping Track of Names [5/5]
 :LOGBOOK:
 CLOCK: [2022-10-10 Mon 10:25]--[2022-10-10 Mon 11:21] =>  0:56
 :END:
@@ -121,7 +119,7 @@ CLOCK: [2022-10-10 Mon 10:25]--[2022-10-10 Mon 11:21] =>  0:56
  - [X] Introducing: the Symbol Table
  - [X] Using Symbols in the Compiler
  - [X] Adding Globals to the VM
-** 6 String, Array and Hash [4/4]
+** DONE 6 String, Array and Hash [4/4]
 :LOGBOOK:
 CLOCK: [2022-10-11 Tue 08:40]--[2022-10-11 Tue 09:05] =>  0:25
 CLOCK: [2022-10-11 Tue 08:09]--[2022-10-11 Tue 08:34] =>  0:25
@@ -131,7 +129,7 @@ CLOCK: [2022-10-11 Tue 07:43]--[2022-10-11 Tue 08:08] =>  0:25
  - [X] Array
  - [X] Hash
  - [X] Adding the index operator
-** 7 Functions [15/15]
+** DONE 7 Functions [15/15]
 :LOGBOOK:
 CLOCK: [2022-10-18 Tue 09:00]--[2022-10-18 Tue 09:25] =>  0:25
 CLOCK: [2022-10-18 Tue 08:31]--[2022-10-18 Tue 08:56] =>  0:25
@@ -163,16 +161,19 @@ CLOCK: [2022-10-12 Wed 08:15]--[2022-10-12 Wed 08:40] =>  0:25
  - [X] Compiling Calls With Arguments
  - [X] Resolving References to Arguments
  - [X] Arguments in the VM
-** 8 Built-in Functions [/]
+** TODO 8 Built-in Functions [/]
+:LOGBOOK:
+CLOCK: [2022-10-19 Wed 09:53]
+:END:
  - [ ] Making the Change Easy
  - [ ] Making the Change: the Plan
  - [ ] A New Scope for Built-in Functions
  - [ ] Executing built-in functions
-** 9 Closures [/]
+** TODO 9 Closures [/]
  - [ ] The Problem
  - [ ] The Plan
  - [ ] Everything’s a closure
  - [ ] Compiling and resolving free variables
  - [ ] Creating real closures at run time
  - [ ] Recursive Closures
-** 10 Taking Time
+** TODO 10 Taking Time

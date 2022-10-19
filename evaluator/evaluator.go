@@ -13,91 +13,12 @@ var (
 )
 
 var builtins = map[string]*object.Builtin{
-	"puts": {
-		Fn: func(args ...object.Object) object.Object {
-			for _, arg := range args {
-				fmt.Println(arg.Inspect())
-			}
-			return NULL
-		},
-	},
-	"len": {
-		Fn: func(args ...object.Object) object.Object {
-			if l := len(args); l != 1 {
-				return newError("wrong number of arguments. got=%d, want=%d", l, 1)
-			}
-			switch arg := args[0].(type) {
-			case *object.String:
-				return &object.Integer{Value: int64(len(arg.Value))}
-			case *object.Array:
-				return &object.Integer{Value: int64(len(arg.Elements))}
-			}
-			return newError("argument to `len` not supported, got %s", args[0].Type())
-		},
-	},
-	"first": {
-		Fn: func(args ...object.Object) object.Object {
-			if l := len(args); l != 1 {
-				return newError("wrong number of arguments. got=%d, want=%d", l, 1)
-			}
-			switch arg := args[0].(type) {
-			case *object.Array:
-				if len(arg.Elements) > 1 {
-					return arg.Elements[0]
-				}
-				return NULL
-			}
-			return newError("argument to `first` not supported, got %s", args[0].Type())
-		},
-	},
-	"last": {
-		Fn: func(args ...object.Object) object.Object {
-			if l := len(args); l != 1 {
-				return newError("wrong number of arguments. got=%d, want=%d", l, 1)
-			}
-			switch arg := args[0].(type) {
-			case *object.Array:
-				if len(arg.Elements) > 1 {
-					return arg.Elements[len(arg.Elements)-1]
-				}
-				return NULL
-			}
-			return newError("argument to `last` not supported, got %s", args[0].Type())
-		},
-	},
-	"rest": {
-		Fn: func(args ...object.Object) object.Object {
-			if l := len(args); l != 1 {
-				return newError("wrong number of arguments. got=%d, want=%d", l, 1)
-			}
-			switch arg := args[0].(type) {
-			case *object.Array:
-				if length := len(arg.Elements); length > 1 {
-					elms := make([]object.Object, length-1, length-1)
-					copy(elms, arg.Elements[1:])
-					return &object.Array{Elements: elms}
-				}
-				return &object.Array{Elements: []object.Object{}}
-			}
-			return newError("argument to `rest` not supported, got %s", args[0].Type())
-		},
-	},
-	"push": {
-		Fn: func(args ...object.Object) object.Object {
-			if l := len(args); l != 2 {
-				return newError("wrong number of arguments. got=%d, want=%d", l, 2)
-			}
-			switch arg := args[0].(type) {
-			case *object.Array:
-				length := len(arg.Elements)
-				newElements := make([]object.Object, length+1, length+1)
-				copy(newElements, arg.Elements)
-				newElements[length] = args[1]
-				return &object.Array{Elements: newElements}
-			}
-			return newError("argument to `push` not supported, got %s", args[0].Type())
-		},
-	},
+	"puts":  object.GetBuiltinByName("puts"),
+	"len":   object.GetBuiltinByName("len"),
+	"first": object.GetBuiltinByName("first"),
+	"last":  object.GetBuiltinByName("last"),
+	"rest":  object.GetBuiltinByName("rest"),
+	"push":  object.GetBuiltinByName("push"),
 }
 
 func Eval(node ast.Node, env *object.Environment) object.Object {
@@ -253,7 +174,10 @@ func applyFunction(fn object.Object, args []object.Object) object.Object {
 		evaluated := Eval(fn.Body, extendedEnv)
 		return unwrapReturnValue(evaluated)
 	case *object.Builtin:
-		return fn.Fn(args...)
+		if result := fn.Fn(args...); result != nil {
+			return result
+		}
+		return NULL
 	default:
 		return newError("not a function %s", fn.Type())
 	}
