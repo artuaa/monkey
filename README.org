@@ -172,7 +172,7 @@ CLOCK: [2022-10-19 Wed 09:53]--[2022-10-19 Wed 10:18] =>  0:25
  - [X] Executing built-in functions
 ** TODO 9 Closures [3/6]
 :LOGBOOK:
-CLOCK: [2022-10-21 Fri 09:58]
+CLOCK: [2022-10-21 Fri 09:58]--[2022-10-21 Fri 10:23] =>  0:25
 CLOCK: [2022-10-20 Thu 09:08]--[2022-10-20 Thu 09:33] =>  0:25
 :END:
  - [X] The Problem

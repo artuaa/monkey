@@ -370,27 +370,6 @@ two;
 	runCompilerTests(t, tests)
 }
 
-func TestResolveGlobal(t *testing.T) {
-	global := NewSymbolTable()
-	global.Define("a")
-	global.Define("b")
-	expected := []Symbol{
-		{Name: "a", Scope: GlobalScope, Index: 0},
-		{Name: "b", Scope: GlobalScope, Index: 1},
-	}
-	for _, sym := range expected {
-		result, ok := global.Resolve(sym.Name)
-		if !ok {
-			t.Errorf("name %s not resolvable", sym.Name)
-			continue
-		}
-		if result != sym {
-			t.Errorf("expected %s to resolve to %+v, got=%+v",
-				sym.Name, sym, result)
-		}
-	}
-}
-
 func TestStringExpressions(t *testing.T) {
 	tests := []compilerTestCase{
 		{
@@ -884,80 +863,6 @@ a + b
 	runCompilerTests(t, tests)
 }
 
-func TestResolveLocal(t *testing.T) {
-	global := NewSymbolTable()
-	global.Define("a")
-	global.Define("b")
-	local := NewEnclosedSymbolTable(global)
-	local.Define("c")
-	local.Define("d")
-	expected := []Symbol{
-		{Name: "a", Scope: GlobalScope, Index: 0},
-		{Name: "b", Scope: GlobalScope, Index: 1},
-		{Name: "c", Scope: LocalScope, Index: 0},
-		{Name: "d", Scope: LocalScope, Index: 1},
-	}
-	for _, sym := range expected {
-		result, ok := local.Resolve(sym.Name)
-		if !ok {
-			t.Errorf("name %s not resolvable", sym.Name)
-			continue
-		}
-		if result != sym {
-			t.Errorf("expected %s to resolve to %+v, got=%+v",
-				sym.Name, sym, result)
-		}
-	}
-}
-
-func TestResolveNestedLocal(t *testing.T) {
-	global := NewSymbolTable()
-	global.Define("a")
-	global.Define("b")
-	firstLocal := NewEnclosedSymbolTable(global)
-	firstLocal.Define("c")
-	firstLocal.Define("d")
-	secondLocal := NewEnclosedSymbolTable(firstLocal)
-	secondLocal.Define("e")
-	secondLocal.Define("f")
-	tests := []struct {
-		table           *SymbolTable
-		expectedSymbols []Symbol
-	}{
-		{
-			firstLocal,
-			[]Symbol{
-				{Name: "a", Scope: GlobalScope, Index: 0},
-				{Name: "b", Scope: GlobalScope, Index: 1},
-				{Name: "c", Scope: LocalScope, Index: 0},
-				{Name: "d", Scope: LocalScope, Index: 1},
-			},
-		},
-		{
-			secondLocal,
-			[]Symbol{
-				{Name: "a", Scope: GlobalScope, Index: 0},
-				{Name: "b", Scope: GlobalScope, Index: 1},
-				{Name: "e", Scope: LocalScope, Index: 0},
-				{Name: "f", Scope: LocalScope, Index: 1},
-			},
-		},
-	}
-	for _, tt := range tests {
-		for _, sym := range tt.expectedSymbols {
-			result, ok := tt.table.Resolve(sym.Name)
-			if !ok {
-				t.Errorf("name %s not resolvable", sym.Name)
-				continue
-			}
-			if result != sym {
-				t.Errorf("expected %s to resolve to %+v, got=%+v",
-					sym.Name, sym, result)
-			}
-		}
-	}
-}
-
 func TestBuiltins(t *testing.T) {
 	tests := []compilerTestCase{
 		{
@@ -997,30 +902,124 @@ push([], 1);
 	runCompilerTests(t, tests)
 }
 
-func TestDefineResolveBuiltins(t *testing.T) {
-	global := NewSymbolTable()
-	firstLocal := NewEnclosedSymbolTable(global)
-	secondLocal := NewEnclosedSymbolTable(firstLocal)
-	expected := []Symbol{
-		{Name: "a", Scope: BuiltinScope, Index: 0},
-		{Name: "c", Scope: BuiltinScope, Index: 1},
-		{Name: "e", Scope: BuiltinScope, Index: 2},
-		{Name: "f", Scope: BuiltinScope, Index: 3},
+func TestClosures(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+			input: `
+fn(a) {
+	fn(b) {
+	a + b
 	}
-	for i, v := range expected {
-		global.DefineBuiltin(i, v.Name)
-	}
-	for _, table := range []*SymbolTable{global, firstLocal, secondLocal} {
-		for _, sym := range expected {
-			result, ok := table.Resolve(sym.Name)
-			if !ok {
-				t.Errorf("name %s not resolvable", sym.Name)
-				continue
-			}
-			if result != sym {
-				t.Errorf("expected %s to resolve to %+v, got=%+v",
-					sym.Name, sym, result)
-			}
+}
+`,
+			expectedConstants: []interface{}{
+				[]code.Instructions{
+					code.Make(code.OpGetFree, 0),
+					code.Make(code.OpGetLocal, 0),
+					code.Make(code.OpAdd),
+					code.Make(code.OpReturnValue),
+				},
+				[]code.Instructions{
+					code.Make(code.OpGetLocal, 0),
+					code.Make(code.OpClosure, 0, 1),
+					code.Make(code.OpReturnValue),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpClosure, 1, 0),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: `
+fn(a) {
+	fn(b) {
+		fn(c) {
+		a + b + c
 		}
 	}
+};
+`,
+			expectedConstants: []interface{}{
+				[]code.Instructions{
+					code.Make(code.OpGetFree, 0),
+					code.Make(code.OpGetFree, 1),
+					code.Make(code.OpAdd),
+					code.Make(code.OpGetLocal, 0),
+					code.Make(code.OpAdd),
+					code.Make(code.OpReturnValue),
+				},
+				[]code.Instructions{
+					code.Make(code.OpGetFree, 0),
+					code.Make(code.OpGetLocal, 0),
+					code.Make(code.OpClosure, 0, 2),
+					code.Make(code.OpReturnValue),
+				},
+				[]code.Instructions{
+					code.Make(code.OpGetLocal, 0),
+					code.Make(code.OpClosure, 1, 1),
+					code.Make(code.OpReturnValue),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpClosure, 2, 0),
+				code.Make(code.OpPop),
+			},
+		},
+		{
+			input: `
+let global = 55;
+fn() {
+	let a = 66;
+	fn() {
+		let b = 77;
+		fn() {
+			let c = 88;
+			global + a + b + c;
+		}
+	}
+}
+`,
+			expectedConstants: []interface{}{
+				55,
+				66,
+				77,
+				88,
+				[]code.Instructions{
+					code.Make(code.OpConstant, 3),
+					code.Make(code.OpSetLocal, 0),
+					code.Make(code.OpGetGlobal, 0),
+					code.Make(code.OpGetFree, 0),
+					code.Make(code.OpAdd),
+					code.Make(code.OpGetFree, 1),
+					code.Make(code.OpAdd),
+					code.Make(code.OpGetLocal, 0),
+					code.Make(code.OpAdd),
+					code.Make(code.OpReturnValue),
+				},
+				[]code.Instructions{
+					code.Make(code.OpConstant, 2),
+					code.Make(code.OpSetLocal, 0),
+					code.Make(code.OpGetFree, 0),
+					code.Make(code.OpGetLocal, 0),
+					code.Make(code.OpClosure, 4, 2),
+					code.Make(code.OpReturnValue),
+				},
+				[]code.Instructions{
+					code.Make(code.OpConstant, 1),
+					code.Make(code.OpSetLocal, 0),
+					code.Make(code.OpGetLocal, 0),
+					code.Make(code.OpClosure, 5, 1),
+					code.Make(code.OpReturnValue),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.OpConstant, 0),
+				code.Make(code.OpSetGlobal, 0),
+				code.Make(code.OpClosure, 6, 0),
+				code.Make(code.OpPop),
+			},
+		},
+	}
+	runCompilerTests(t, tests)
 }

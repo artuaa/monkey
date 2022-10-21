@@ -201,15 +201,9 @@ func (c *Compiler) Compile(node ast.Node) error {
 		if !ok {
 			return fmt.Errorf("undefined variable %s", node.Value)
 		}
-		switch symbol.Scope {
-		case GlobalScope:
-			c.emit(code.OpGetGlobal, symbol.Index)
-		case LocalScope:
-			c.emit(code.OpGetLocal, symbol.Index)
-		case BuiltinScope:
-			c.emit(code.OpGetBuiltin, symbol.Index)
-		default:
-			return fmt.Errorf("unexpected symbol scope: %s", symbol.Scope)
+		err := c.loadSymbol(symbol)
+		if err != nil {
+			return err
 		}
 	case *ast.StringLiteral:
 		str := &object.String{Value: node.Value}
@@ -267,14 +261,23 @@ func (c *Compiler) Compile(node ast.Node) error {
 		if len(c.currentInstructions()) == 0 {
 			c.emit(code.OpReturn)
 		}
+		freeSymbols := c.symbolTable.FreeSymbols
 		numLocals := c.symbolTable.numDefinitions
 		instructions := c.leaveScope()
+
+		for _, s := range freeSymbols {
+			err := c.loadSymbol(s)
+			if err != nil {
+				return err
+			}
+		}
 		compiledFn := &object.CompiledFunction{
 			Instructions:  instructions,
 			NumLocals:     numLocals,
 			NumParameters: len(node.Parameters),
 		}
-		c.emit(code.OpClosure, c.addConstant(compiledFn))
+		fnIndex := c.addConstant(compiledFn)
+		c.emit(code.OpClosure, fnIndex, len(freeSymbols))
 	case *ast.ReturnStatement:
 		err := c.Compile(node.ReturnValue)
 		if err != nil {
@@ -293,6 +296,22 @@ func (c *Compiler) Compile(node ast.Node) error {
 			}
 		}
 		c.emit(code.OpCall, len(node.Arguments))
+	}
+	return nil
+}
+
+func (c *Compiler) loadSymbol(symbol Symbol) error {
+	switch symbol.Scope {
+	case GlobalScope:
+		c.emit(code.OpGetGlobal, symbol.Index)
+	case LocalScope:
+		c.emit(code.OpGetLocal, symbol.Index)
+	case BuiltinScope:
+		c.emit(code.OpGetBuiltin, symbol.Index)
+	case FreeScope:
+		c.emit(code.OpGetFree, symbol.Index)
+	default:
+		return fmt.Errorf("unexpected symbol scope: %s", symbol.Scope)
 	}
 	return nil
 }
