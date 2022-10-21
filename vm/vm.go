@@ -24,24 +24,11 @@ type VM struct {
 	framesIndex int
 }
 
-func (vm *VM) currentFrame() *Frame {
-	return vm.frames[vm.framesIndex-1]
-}
-
-func (vm *VM) pushFrame(f *Frame) {
-	vm.frames[vm.framesIndex] = f
-	vm.framesIndex++
-}
-
-func (vm *VM) popFrame() *Frame {
-	vm.framesIndex--
-	return vm.frames[vm.framesIndex]
-}
-
 func New(bytecode *compiler.Bytecode) *VM {
 	frames := make([]*Frame, MaxFrames)
 	mainFn := &object.CompiledFunction{Instructions: bytecode.Instructions}
-	mainFrame := NewFrame(mainFn, 0)
+	mainClosure := &object.Closure{Fn: mainFn}
+	mainFrame := NewFrame(mainClosure, 0)
 	frames[0] = mainFrame
 	return &VM{
 		constants:   bytecode.Constants,
@@ -57,6 +44,20 @@ func NewWithGlobalsStore(bytecode *compiler.Bytecode, s []object.Object) *VM {
 	vm := New(bytecode)
 	vm.globals = s
 	return vm
+}
+
+func (vm *VM) currentFrame() *Frame {
+	return vm.frames[vm.framesIndex-1]
+}
+
+func (vm *VM) pushFrame(f *Frame) {
+	vm.frames[vm.framesIndex] = f
+	vm.framesIndex++
+}
+
+func (vm *VM) popFrame() *Frame {
+	vm.framesIndex--
+	return vm.frames[vm.framesIndex]
 }
 
 func (vm *VM) Run() error {
@@ -195,18 +196,26 @@ func (vm *VM) Run() error {
 			default:
 				return fmt.Errorf("index operator not supported %s", left.Type())
 			}
+		case code.OpClosure:
+			index := code.ReadUint16(ins[vm.currentFrame().ip +1:])
+			_ = code.ReadUint16(ins[vm.currentFrame().ip +3:])
+			vm.currentFrame().ip +=4
+			err := vm.pushClosure(index)
+			if err!=nil{
+				return err
+			}
 		case code.OpCall:
 			numArgs := code.ReadUint16(ins[vm.currentFrame().ip+1:])
 			vm.currentFrame().ip += 2
 			obj := vm.stack[vm.sp-1-numArgs]
 			switch fn := obj.(type) {
-			case *object.CompiledFunction:
-				if numArgs != fn.NumParameters {
-					return fmt.Errorf("wrong number of arguments: want=%d, got=%d", fn.NumParameters, numArgs)
+			case *object.Closure:
+				if numArgs != fn.Fn.NumParameters {
+					return fmt.Errorf("wrong number of arguments: want=%d, got=%d", fn.Fn.NumParameters, numArgs)
 				}
 				frame := NewFrame(fn, vm.sp-numArgs)
 				vm.pushFrame(frame)
-				vm.sp = frame.basePointer + fn.NumLocals
+				vm.sp = frame.basePointer + fn.Fn.NumLocals
 			case *object.Builtin:
 				args := vm.stack[vm.sp-numArgs : vm.sp]
 				result := fn.Fn(args...)
@@ -260,19 +269,6 @@ func (vm *VM) Run() error {
 		}
 	}
 	return nil
-}
-
-func isTruthy(condition object.Object) bool {
-	switch condition {
-	case True:
-		return true
-	case False:
-		return false
-	case Null:
-		return false
-	default:
-		return true
-	}
 }
 
 func (vm *VM) executeMinusOperator() error {
@@ -361,13 +357,6 @@ func (vm *VM) executeBinaryStringOperation(left, right object.Object, op code.Op
 	}
 }
 
-func nativeBoolToBooleanObject(v bool) *object.Boolean {
-	if v {
-		return True
-	}
-	return False
-}
-
 func (vm *VM) push(c object.Object) error {
 	if vm.sp > StackSize {
 		return fmt.Errorf("stack oveflow")
@@ -394,4 +383,36 @@ func (vm *VM) StackTop() object.Object {
 
 func (vm *VM) LastPoppedStackElem() object.Object {
 	return vm.stack[vm.sp]
+}
+
+func (vm *VM) pushClosure(index int) error{
+	constant := vm.constants[index]
+	fn, ok := constant.(*object.CompiledFunction)
+
+	if !ok {
+		return fmt.Errorf("not a function: %+v", constant)
+	}
+
+	closure := &object.Closure{Fn:fn}
+	return vm.push(closure)
+}
+
+func nativeBoolToBooleanObject(v bool) *object.Boolean {
+	if v {
+		return True
+	}
+	return False
+}
+
+func isTruthy(condition object.Object) bool {
+	switch condition {
+	case True:
+		return true
+	case False:
+		return false
+	case Null:
+		return false
+	default:
+		return true
+	}
 }

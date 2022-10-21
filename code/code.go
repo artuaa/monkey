@@ -34,6 +34,7 @@ const (
 	OpReturnValue
 	OpReturn
 	OpGetBuiltin
+	OpClosure
 )
 
 type Instructions []byte
@@ -73,6 +74,7 @@ var definitions = map[Opcode]*Definition{
 	OpGetLocal:      {"OpGetLocal", []int{2}},
 	OpSetLocal:      {"OpSetLocal", []int{2}},
 	OpGetBuiltin:    {"OpGetBuiltin", []int{2}},
+	OpClosure:       {"OpClosure", []int{2, 2}},
 }
 
 func Lookup(op byte) (*Definition, error) {
@@ -124,6 +126,8 @@ func (instructions Instructions) String() string {
 			out.WriteString(def.Name + "\n\t")
 		case 1:
 			out.WriteString(fmt.Sprintf("%s %d\n\t", def.Name, operands[0]))
+		case 2:
+			out.WriteString(fmt.Sprintf("%s %d %d\n\t", def.Name, operands[0], operands[1]))
 		default:
 			out.WriteString(fmt.Sprintf("ERROR: unhandled operandCount for %s\n", def.Name))
 		}
