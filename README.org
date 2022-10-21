@@ -170,15 +170,16 @@ CLOCK: [2022-10-19 Wed 09:53]--[2022-10-19 Wed 10:18] =>  0:25
  - [X] Making the Change: the Plan
  - [X] A New Scope for Built-in Functions
  - [X] Executing built-in functions
-** TODO 9 Closures [3/6]
+** TODO 9 Closures [5/6]
 :LOGBOOK:
+CLOCK: [2022-10-21 Fri 11:21]--[2022-10-21 Fri 11:46] =>  0:25
 CLOCK: [2022-10-21 Fri 09:58]--[2022-10-21 Fri 10:23] =>  0:25
 CLOCK: [2022-10-20 Thu 09:08]--[2022-10-20 Thu 09:33] =>  0:25
 :END:
  - [X] The Problem
  - [X] The Plan
  - [X] Everything’s a closure
- - [ ] Compiling and resolving free variables
- - [ ] Creating real closures at run time
+ - [X] Compiling and resolving free variables
+ - [X] Creating real closures at run time
  - [ ] Recursive Closures
 ** TODO 10. Taking Time

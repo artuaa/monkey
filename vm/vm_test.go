@@ -551,11 +551,48 @@ func TestBuiltinFunctions(t *testing.T) {
 		{`rest([1, 2, 3])`, []int{2, 3}},
 		{`rest([])`, Null},
 		{`push([], 1)`, []int{1}},
-		{`push([], 1, 2, 3)`, []int{1,2,3}},
+		{`push([], 1, 2, 3)`, []int{1, 2, 3}},
 		{`push(1, 1)`,
 			&object.Error{
 				Message: "argument to `push` must be ARRAY, got INTEGER",
 			},
+		},
+	}
+	runVmTests(t, tests)
+}
+
+func TestClosures(t *testing.T) {
+	tests := []vmTestCase{
+		{
+input: `
+let newClosure = fn(a) {
+fn() { a; };
+};
+let closure = newClosure(99);
+closure();
+`,
+expected: 99,
+},
+		{
+			input: `
+let newAdder = fn(a, b) {
+fn(c) { a + b + c };
+};
+let adder = newAdder(1, 2);
+adder(8);
+`,
+			expected: 11,
+		},
+		{
+			input: `
+let newAdder = fn(a, b) {
+let c = a + b;
+fn(d) { c + d };
+};
+let adder = newAdder(1, 2);
+adder(8);
+`,
+			expected: 11,
 		},
 	}
 	runVmTests(t, tests)

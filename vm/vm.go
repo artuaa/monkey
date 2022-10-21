@@ -67,6 +67,8 @@ func (vm *VM) Run() error {
 		vm.currentFrame().ip++
 		ins = vm.currentFrame().Instructions()
 		op = code.Opcode(ins[vm.currentFrame().ip])
+		opstring, _ := code.Lookup(ins[vm.currentFrame().ip])
+		fmt.Printf("operation: %s\n", opstring.Name)
 		switch op {
 		case code.OpConstant:
 			constIdx := code.ReadUint16(ins[vm.currentFrame().ip+1:])
@@ -197,11 +199,11 @@ func (vm *VM) Run() error {
 				return fmt.Errorf("index operator not supported %s", left.Type())
 			}
 		case code.OpClosure:
-			index := code.ReadUint16(ins[vm.currentFrame().ip +1:])
-			_ = code.ReadUint16(ins[vm.currentFrame().ip +3:])
-			vm.currentFrame().ip +=4
-			err := vm.pushClosure(index)
-			if err!=nil{
+			index := code.ReadUint16(ins[vm.currentFrame().ip+1:])
+			numFree := code.ReadUint16(ins[vm.currentFrame().ip+3:])
+			vm.currentFrame().ip += 4
+			err := vm.pushClosure(index, numFree)
+			if err != nil {
 				return err
 			}
 		case code.OpCall:
@@ -266,6 +268,20 @@ func (vm *VM) Run() error {
 			if err != nil {
 				return err
 			}
+		case code.OpGetFree:
+			index := code.ReadUint16(ins[vm.currentFrame().ip+1:])
+			vm.currentFrame().ip += 2
+
+			currentClosure := vm.currentFrame().cl
+
+			fmt.Printf("Index: %d\n", index)
+			fmt.Printf("Free count: %d\n", len(currentClosure.Free))
+
+			err := vm.push(currentClosure.Free[index])
+			if err != nil {
+				return err
+			}
+
 		}
 	}
 	return nil
@@ -385,15 +401,20 @@ func (vm *VM) LastPoppedStackElem() object.Object {
 	return vm.stack[vm.sp]
 }
 
-func (vm *VM) pushClosure(index int) error{
+func (vm *VM) pushClosure(index, numFree int) error {
 	constant := vm.constants[index]
 	fn, ok := constant.(*object.CompiledFunction)
 
 	if !ok {
 		return fmt.Errorf("not a function: %+v", constant)
 	}
+	free := make([]object.Object, numFree)
+	for i := 0; i < numFree; i++ {
+		free[i] = vm.stack[vm.sp-numFree+i]
+	}
+	vm.sp = vm.sp - numFree
 
-	closure := &object.Closure{Fn:fn}
+	closure := &object.Closure{Fn: fn, Free: free}
 	return vm.push(closure)
 }
 
