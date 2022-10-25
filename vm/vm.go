@@ -67,8 +67,8 @@ func (vm *VM) Run() error {
 		vm.currentFrame().ip++
 		ins = vm.currentFrame().Instructions()
 		op = code.Opcode(ins[vm.currentFrame().ip])
-		opstring, _ := code.Lookup(ins[vm.currentFrame().ip])
-		fmt.Printf("operation: %s\n", opstring.Name)
+		// opstring, _ := code.Lookup(ins[vm.currentFrame().ip])
+		// fmt.Printf("operation: %s\n", opstring.Name)
 		switch op {
 		case code.OpConstant:
 			constIdx := code.ReadUint16(ins[vm.currentFrame().ip+1:])
@@ -228,7 +228,7 @@ func (vm *VM) Run() error {
 					vm.push(Null)
 				}
 			default:
-				return fmt.Errorf("calling non-function")
+				return fmt.Errorf("calling non-closure and non-builtin")
 			}
 		case code.OpReturnValue:
 			value := vm.pop()
@@ -274,14 +274,16 @@ func (vm *VM) Run() error {
 
 			currentClosure := vm.currentFrame().cl
 
-			fmt.Printf("Index: %d\n", index)
-			fmt.Printf("Free count: %d\n", len(currentClosure.Free))
-
 			err := vm.push(currentClosure.Free[index])
 			if err != nil {
 				return err
 			}
-
+		case code.OpCurrentClosure:
+			closure := vm.currentFrame().cl
+			err := vm.push(closure)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil

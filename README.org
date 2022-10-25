@@ -76,7 +76,7 @@
 - [X] Evaluating Hash Literals
 - [X] Evaluating Index Expressions With Hashes
 - [X] 4.6 - The Grand Final
-* PROJ Writing An Compiler In Go [9/11]
+* PROJ Writing An Compiler In Go [10/11]
 ** DONE Introduction [4/4]
  - [X] Evolving Monkey
  - [X] The Past and Present
@@ -170,8 +170,10 @@ CLOCK: [2022-10-19 Wed 09:53]--[2022-10-19 Wed 10:18] =>  0:25
  - [X] Making the Change: the Plan
  - [X] A New Scope for Built-in Functions
  - [X] Executing built-in functions
-** TODO 9 Closures [5/6]
+** DONE 9 Closures [6/6]
 :LOGBOOK:
+CLOCK: [2022-10-25 Tue 10:59]--[2022-10-25 Tue 11:20] =>  0:21
+CLOCK: [2022-10-25 Tue 10:20]--[2022-10-25 Tue 10:45] =>  0:25
 CLOCK: [2022-10-21 Fri 11:21]--[2022-10-21 Fri 11:46] =>  0:25
 CLOCK: [2022-10-21 Fri 09:58]--[2022-10-21 Fri 10:23] =>  0:25
 CLOCK: [2022-10-20 Thu 09:08]--[2022-10-20 Thu 09:33] =>  0:25
@@ -181,5 +183,5 @@ CLOCK: [2022-10-20 Thu 09:08]--[2022-10-20 Thu 09:33] =>  0:25
  - [X] Everything’s a closure
  - [X] Compiling and resolving free variables
  - [X] Creating real closures at run time
- - [ ] Recursive Closures
+ - [X] Recursive Closures
 ** TODO 10. Taking Time
