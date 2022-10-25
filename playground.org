@@ -34,3 +34,16 @@ Builtin's
 #+begin_src tmux
 push(rest(["piu", "hop", "hey"]), "la", "la", "ley")
 #+end_src
+* Interpreter vs Virtual machine
+#+begin_src tmux
+cd ~/monkey_interpreter
+go build -o fibonacci ./benchmark
+#+end_src
+
+#+begin_src tmux
+./fibonacci -engine=eval
+#+end_src
+
+#+begin_src tmux
+./fibonacci -engine=vm
+#+end_src
